@@ -1,7 +1,7 @@
 {
     "name": "vandelay-js",
-    "displayName": "Vandelay",
-    "description": "Importer/Exporter",
+    "displayName": "Vandelay JS",
+    "description": "Python plugin for the VS Code Vandelay extension",
     "version": "0.0.1",
     "publisher": "edb",
     "engines": {

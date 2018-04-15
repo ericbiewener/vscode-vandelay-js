@@ -12,7 +12,7 @@ const ExportType = {
 }
 
 function buildImportItems(plugin, exportData) {
-  const { projectRoot, shouldIncludeImport } = plugin
+  const {projectRoot, shouldIncludeImport} = plugin
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
 
