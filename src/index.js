@@ -1,10 +1,8 @@
-const {commands, workspace, extensions} = require('vscode')
+const {extensions} = require('vscode')
 const {cacheFile, processCachedData} = require('./cacher')
 const {buildImportItems, insertImport} = require('./importer')
-const {isFile} = require('./utils')
 
-async function activate(context) {
-  console.log('activating')
+async function activate() {
   const vandelay = await extensions.getExtension('edb.vandelay').activate()
 
   vandelay.registerPlugin({
