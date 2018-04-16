@@ -29,9 +29,53 @@ function strUntil(str, endChar) {
   return index < 0 ? str : str.slice(0, index)
 }
 
+function isPathNodeModule(plugin, importPath) {
+  if (importPath.startsWith('.')) return false
+  return plugin.absolutePaths.some(p => p === importPath || importPath.startsWith(p + '/'))
+}
+
+function getLineImports(lines, lineIndex) {
+  let importText
+  const line = lines[lineIndex]
+  
+  if (line.includes(' from ')) {
+    importText = line
+  }
+  else {
+    for (let i = lineIndex; i < lines.length; i++) {
+      if (lines[i].includes(' from ')) {
+        importText = lines.slice(lineIndex, i + 1).join(' ')
+        break
+      }
+    }
+  }
+
+  if (!importText) return
+  
+  const imports = { named: [], types: [] };
+
+  if (importText[7] !== '{') imports.default = strBetween(importText, ' ').replace(',', '')
+  
+  const nonDefaultImportText = strBetween(importText, '{', '}')
+  if (!nonDefaultImportText) return imports
+
+  nonDefaultImportText.split(',').forEach(item => {
+    const trimmedItem = item.trim()
+    if (trimmedItem.startsWith('type ')) {
+      imports.types.push(trimmedItem)
+    } else {
+      imports.named.push(trimmedItem)
+    }
+  })
+
+  return imports
+}
+
 module.exports = {
   trimPath,
   strBetween,
   parseLineImportPath,
   strUntil,
+  isPathNodeModule,
+  getLineImports,
 }

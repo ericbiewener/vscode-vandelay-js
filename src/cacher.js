@@ -1,17 +1,25 @@
 const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
-const {trimPath, parseLineImportPath, strUntil} = require('./utils')
+const {trimPath, parseLineImportPath, strUntil, isPathNodeModule} = require('./utils')
 
 
-function cacheFile(plugin, filepath, data = {}) {
+function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
   const {getFilepathKey} = require('./cacher')
 
   const fileExports = {}
   const lines = fs.readFileSync(filepath, 'utf8').split('\n')
 
   lines.forEach(line => {
-    if (!line.startsWith('export')) return
+    // Check for node_modules to cache in _extraImports
+    if (line.startsWith('import ')) {
+      const linePath = parseLineImportPath(line)
+      if (!isPathNodeModule(plugin, linePath)) return
+      
+      return
+    }
+
+    if (!line.startsWith('export ')) return
 
     const words = line.trim().split(/ +/)
     switch (words[1]) {

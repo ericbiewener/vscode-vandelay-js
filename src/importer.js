@@ -3,7 +3,7 @@
 const {window, Range, Position} = require('vscode')
 const path = require('path')
 const _ = require('lodash')
-const {trimPath, parseLineImportPath, strBetween} = require('./utils')
+const {trimPath, parseLineImportPath, strBetween, isPathNodeModule, getLineImports} = require('./utils')
 
 const ExportType = {
   default: 0,
@@ -87,8 +87,8 @@ async function insertImport(plugin, importSelection) {
   const lines = editor.document.getText().split('\n')
   
   const linePosition = getLinePosition(plugin, finalImportPath, isExtraImport, lines)
-  const {defaultImport, namedImports, typeImports} = getNewLineImports(lines, exportName, exportType, linePosition)
-  const newLine = getNewLine(plugin, finalImportPath, defaultImport, namedImports, typeImports)
+  const lineImports = getNewLineImports(lines, exportName, exportType, linePosition)
+  const newLine = getNewLine(plugin, finalImportPath, lineImports)
   
   const {lineIndex, lineIndexModifier, multiLineStart} = linePosition
   
@@ -126,7 +126,6 @@ function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
  **/
 function getLinePosition(plugin, importPath, isExtraImport, lines) {
   const settingsPos = plugin.importOrderMap[importPath]
-  const nonModulePathStarts = (plugin.absolutePaths || []).concat('.')
   
   let lineIndex
   let lineIndexModifier = 1
@@ -154,6 +153,10 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       break
     }
 
+    // multiLineStart only matters if the paths match. If we've arrived here, the import that multiLineStart
+    // currently refers to does not have a matching path.
+    multiLineStart = null
+
     const lineSettingsPos = plugin.importOrderMap[linePath]
 
     // If import exists in plugin.importOrder
@@ -177,7 +180,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       continue
     }
 
-    const lineIsNodeModule = !nonModulePathStarts.some(p => linePath.startsWith(p))
+    const lineIsNodeModule = isPathNodeModule(plugin, linePath)
 
     // If import is a node module
     if (
@@ -251,55 +254,37 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
 }
 
 function getNewLineImports(lines, exportName, exportType, linePosition) {
-  const {lineIndex, lineIndexModifier, isFirstImportLine, multiLineStart} = linePosition
-  let defaultImport = exportType === ExportType.default ? exportName : null
-  const namedImports = exportType === ExportType.named ? [exportName] : []
-  const typeImports = exportType === ExportType.type ? ['type ' + exportName] : []
+  const {lineIndex, lineIndexModifier, isFirstImportLine} = linePosition
 
-  if (!lineIndexModifier && !isFirstImportLine) {
-    const line = multiLineStart
-      ? lines.slice(multiLineStart, lineIndex + 1).join(' ')
-      : lines[lineIndex]
-    
-    const hasDefault = line[7] !== '{'
-    if (exportType === ExportType.default) {
-      if (hasDefault) return // default export already exists so bail out
-    } else if (hasDefault) {
-      defaultImport = strBetween(line, ' ').replace(',', '')
-    }
-    
-    const nonDefaultImportText = strBetween(line, '{', '}')
-    if (nonDefaultImportText) {
-      nonDefaultImportText.split(',').forEach(item => {
-        const trimmedItem = item.trim()
-        if (trimmedItem.startsWith('type ')) {
-          if (exportType === ExportType.type && trimmedItem === exportName) return
-          typeImports.push(trimmedItem)
-        } else {
-          if (exportType === ExportType.named && trimmedItem === exportName) return
-          namedImports.push(trimmedItem)
-        }
-      })
-    }
+  const lineImports = lineIndexModifier || isFirstImportLine
+    ? { named: [], types: [] }
+    : getLineImports(lines, lineIndex)
+  
+  if (exportType === ExportType.default) {
+    lineImports.default = exportName
+  } else if (exportType === ExportType.named) {
+    lineImports.named.push(exportName)
+  } else {
+    lineImports.types.push(exportName)
   }
 
-  return {defaultImport, namedImports, typeImports}
+  return lineImports
 }
 
-function getNewLine(plugin, importPath, defaultImport, namedImports, typeImports) {
+function getNewLine(plugin, importPath, imports) {
   const {padCurlyBraces, quoteType, useSemicolons, maxImportLineLength, multilineImportStyle, commaDangle} = plugin
 
-  namedImports.sort()
-  typeImports.sort()
-  const nonDefaultImports = namedImports.concat(typeImports)
+  imports.named.sort()
+  imports.types.sort()
+  const nonDefaultImports = imports.named.concat(imports.types)
 
   let newLineStart = 'import'
-  if (defaultImport) newLineStart += ' ' + defaultImport
+  if (imports.default) newLineStart += ' ' + imports.default
 
   let newLineMiddle = ''
   let newLineEnd = ''
   if (nonDefaultImports.length) {
-    if (defaultImport) newLineStart += ','
+    if (imports.default) newLineStart += ','
     newLineStart += ' {'
     if (padCurlyBraces) newLineStart += ' '
     newLineMiddle = nonDefaultImports.join(', ')
