@@ -154,6 +154,9 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       break
     }
 
+    // Since the paths don't match, whether or not we're currently in a multiline import is irrelevant
+    multiLineStart = null
+
     const lineSettingsPos = plugin.importOrderMap[linePath]
 
     // If import exists in plugin.importOrder
@@ -272,6 +275,8 @@ function getNewLineImports(lines, exportName, exportType, linePosition) {
     if (nonDefaultImportText) {
       nonDefaultImportText.split(',').forEach(item => {
         const trimmedItem = item.trim()
+        if (!trimmedItem) return // Trailing commas on named/type imports will lead to this
+        
         if (trimmedItem.startsWith('type ')) {
           if (exportType === ExportType.type && trimmedItem === exportName) return
           typeImports.push(trimmedItem)
