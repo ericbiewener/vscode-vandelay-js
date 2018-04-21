@@ -28,8 +28,8 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       const existing = data._extraImports[linePath] || {isExtraImport: true}
       
       if (lineImports.default) existing.default = lineImports.default
-      if (lineImports.named) lineImports.named = _.union(lineImports.named, existing.named)
-      if (lineImports.types) lineImports.types = _.union(lineImports.types, existing.types)
+      if (lineImports.named) existing.named = _.union(lineImports.named, existing.named)
+      if (lineImports.types) existing.types = _.union(lineImports.types, existing.types)
       data._extraImports[linePath] = existing
       return
     }
