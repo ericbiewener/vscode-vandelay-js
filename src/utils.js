@@ -31,7 +31,7 @@ function strUntil(str, endChar) {
 
 function isPathNodeModule(plugin, importPath) {
   if (importPath.startsWith('.')) return false
-  return plugin.absolutePaths.some(p => p === importPath || importPath.startsWith(p + '/'))
+  return !plugin.absolutePaths.some(p => p === importPath || importPath.startsWith(p + '/'))
 }
 
 function getLineImports(lines, lineIndex) {
@@ -52,7 +52,7 @@ function getLineImports(lines, lineIndex) {
 
   if (!importText) return
   
-  const imports = { named: [], types: [] };
+  const imports = {named: [], types: []}
 
   if (importText[7] !== '{') imports.default = strBetween(importText, ' ').replace(',', '')
   
@@ -64,7 +64,7 @@ function getLineImports(lines, lineIndex) {
     if (!trimmedItem) return // Trailing commas on named/type imports will lead to this
 
     if (trimmedItem.startsWith('type ')) {
-      imports.types.push(trimmedItem)
+      imports.types.push(trimmedItem.slice(5))
     } else {
       imports.named.push(trimmedItem)
     }

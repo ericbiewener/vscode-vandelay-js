@@ -1,19 +1,40 @@
 const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
-const {trimPath, parseLineImportPath, strUntil, isPathNodeModule} = require('./utils')
+const {trimPath, parseLineImportPath, strUntil, isPathNodeModule, getLineImports} = require('./utils')
 
 
 function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
   const fileExports = {}
   const lines = fs.readFileSync(filepath, 'utf8').split('\n')
+  let multiLineStart
 
-  lines.forEach(line => {
-    // Check for node_modules to cache in _extraImports
-    if (line.startsWith('import ')) {
-      const linePath = parseLineImportPath(line)
-      if (!isPathNodeModule(plugin, linePath)) return
+  lines.forEach((line, i) => {
+    // Cache node_modules in _extraImports
+    const isImportStart = line.startsWith('import ')
+    if (isImportStart || multiLineStart != null) {
       
+      if (!line.includes(' from ')) {
+        if (isImportStart) multiLineStart = i
+        return
+      }
+
+      const importStartLine = isImportStart ? i : multiLineStart
+      multiLineStart = null
+      
+      const linePath = parseLineImportPath(line)
+      try {
+        if (!isPathNodeModule(plugin, linePath)) return
+      } catch(e) {
+        return
+      }
+      const lineImports = getLineImports(lines, importStartLine)
+      const existing = data._extraImports[linePath] || {isExtraImport: true}
+      
+      if (lineImports.default) existing.default = lineImports.default
+      if (lineImports.named) lineImports.named = _.union(lineImports.named, existing.named)
+      if (lineImports.types) lineImports.types = _.union(lineImports.types, existing.types)
+      data._extraImports[linePath] = existing
       return
     }
 

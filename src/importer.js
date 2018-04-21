@@ -3,7 +3,7 @@
 const {window, Range, Position} = require('vscode')
 const path = require('path')
 const _ = require('lodash')
-const {trimPath, parseLineImportPath, strBetween, isPathNodeModule, getLineImports} = require('./utils')
+const {trimPath, parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
 
 const ExportType = {
   default: 0,
@@ -257,7 +257,7 @@ function getNewLineImports(lines, exportName, exportType, linePosition) {
   const {lineIndex, lineIndexModifier, isFirstImportLine} = linePosition
 
   const lineImports = lineIndexModifier || isFirstImportLine
-    ? { named: [], types: [] }
+    ? {named: [], types: []}
     : getLineImports(lines, lineIndex)
   
   if (exportType === ExportType.default) {
