@@ -23,11 +23,7 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       multiLineStart = null
       
       const linePath = parseLineImportPath(line)
-      try {
-        if (!isPathNodeModule(plugin, linePath)) return
-      } catch(e) {
-        return
-      }
+      if (!isPathNodeModule(plugin, linePath)) return
       const lineImports = getLineImports(lines, importStartLine)
       const existing = data._extraImports[linePath] || {isExtraImport: true}
       

@@ -144,14 +144,17 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       }
     }
 
-    // Break once we find a line with the same path or a path that should be sorted later
-
     const linePath = parseLineImportPath(line)
     if (linePath === importPath) {
       lineIndex = i
       lineIndexModifier = 0
       break
     }
+
+    // If `lineIndex` has a value, then we have already found a line before/after which the new line should go.
+    // We are now continuing to loop only to see if there is a later line with a matching import path that should
+    // override the sort destination we computed.
+    if (lineIndex != null) continue
 
     // multiLineStart only matters if the paths match. If we've arrived here, the import that multiLineStart
     // currently refers to does not have a matching path.
@@ -164,7 +167,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       if (lineSettingsPos == null || lineSettingsPos > settingsPos) {
         lineIndex = i
         lineIndexModifier = -1
-        break
+        continue
       }
       else {
         lineIndex = i
@@ -189,7 +192,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
     ) {
       lineIndex = i
       lineIndexModifier = -1
-      break
+      continue
     }
     // If line is a node module but we didn't break above, then import must come after it
     if (lineIsNodeModule) {
@@ -205,7 +208,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       if (!lineIsAbsolute) {
         lineIndex = i
         lineIndexModifier = -1
-        break
+        continue
       }
     }
     else if (lineIsAbsolute) {
@@ -215,13 +218,8 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
     }
 
     // No special sorting
-    if (linePath > importPath) {
-      lineIndex = i
-      lineIndexModifier = -1
-      break
-    }
-
     lineIndex = i
+    if (linePath > importPath) lineIndexModifier = -1
   }
 
   const isFirstImportLine = lineIndex == null
@@ -276,7 +274,7 @@ function getNewLine(plugin, importPath, imports) {
 
   imports.named.sort()
   imports.types.sort()
-  const nonDefaultImports = imports.named.concat(imports.types)
+  const nonDefaultImports = imports.named.concat(imports.types.map(t => 'type ' + t))
 
   let newLineStart = 'import'
   if (imports.default) newLineStart += ' ' + imports.default
