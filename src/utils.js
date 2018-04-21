@@ -61,6 +61,8 @@ function getLineImports(lines, lineIndex) {
 
   nonDefaultImportText.split(',').forEach(item => {
     const trimmedItem = item.trim()
+    if (!trimmedItem) return // Trailing commas on named/type imports will lead to this
+
     if (trimmedItem.startsWith('type ')) {
       imports.types.push(trimmedItem)
     } else {

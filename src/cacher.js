@@ -5,8 +5,6 @@ const {trimPath, parseLineImportPath, strUntil, isPathNodeModule} = require('./u
 
 
 function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
-  const {getFilepathKey} = require('./cacher')
-
   const fileExports = {}
   const lines = fs.readFileSync(filepath, 'utf8').split('\n')
 
@@ -65,7 +63,10 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     }
   })
 
-  if (!_.isEmpty(fileExports)) data[getFilepathKey('js', filepath)] = fileExports
+  if (!_.isEmpty(fileExports)) {
+    const filePathKey = plugin.utils.getFilepathKey(filepath)
+    data[filePathKey] = fileExports
+  }
 
   return data
 }
