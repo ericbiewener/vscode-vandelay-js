@@ -11,6 +11,18 @@
         "Other"
     ],
     "activationEvents": ["*"],
+    "contributes": {
+        "commands": [
+            {
+                "title": "Import type...",
+                "command": "vandelayJs.selectTypeImport"
+            },
+            {
+                "title": "Import type for active word...",
+                "command": "vandelayJs.selectTypeImportForActiveWord"
+            }
+        ]
+    },
     "main": "./src/index.js",
     "scripts": {
         "build": "babel ./src --out-dir=./build --source-maps",
@@ -25,5 +37,8 @@
     "dependencies": {
         "fs-extra": "^5.0.0",
         "lodash": "^4.17.5"
-    }
+    },
+    "eslintIgnore": [
+        "**/__mocks__"
+    ]
 }

@@ -24,6 +24,7 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       
       const linePath = parseLineImportPath(line)
       if (!isPathNodeModule(plugin, linePath)) return
+      
       const lineImports = getLineImports(lines, importStartLine)
       const existing = data._extraImports[linePath] || {isExtraImport: true}
       
@@ -52,7 +53,7 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
 
       case 'type':
         fileExports.types = fileExports.types || []
-        fileExports.types.push(words[2])
+        fileExports.types.push(strUntil(words[2], '<')) // strip off generics
         return
 
       case 'const':

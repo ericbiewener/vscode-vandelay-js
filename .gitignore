@@ -3,3 +3,4 @@ node_modules
 *.vsix
 *.code-workspace
 vandelay-core
+TODO.md

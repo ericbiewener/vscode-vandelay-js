@@ -79,6 +79,10 @@ function buildImportItems(plugin, exportData) {
   return items
 }
 
+function buildTypeImportItems(plugin, exportData) {
+  return buildImportItems(plugin, exportData).filter(e => e.exportType === ExportType.type)
+}
+
 async function insertImport(plugin, importSelection) {
   const {label: exportName, description: importPath, absImportPath, exportType, isExtraImport} = importSelection
   const editor = window.activeTextEditor
@@ -90,15 +94,19 @@ async function insertImport(plugin, importSelection) {
   const lineImports = getNewLineImports(lines, exportName, exportType, linePosition)
   const newLine = getNewLine(plugin, finalImportPath, lineImports)
   
-  const {lineIndex, lineIndexModifier, multiLineStart} = linePosition
+  const {lineIndex, lineIndexModifier, multiLineStart, isFirstImportLine} = linePosition
   
   await editor.edit(builder => {
     if (!lineIndexModifier) {
       builder.replace(new Range(multiLineStart || lineIndex, 0, lineIndex, lines[lineIndex].length), newLine)
     } else if (lineIndexModifier === 1) {
       builder.insert(new Position(lineIndex, lines[lineIndex].length), '\n' + newLine)
-    } else {
-      builder.insert(new Position(lineIndex, 0), newLine + '\n')
+    } else { // -1
+      // If it's the first import line, then add an extra new line between it and the subsequent non-import code.
+      // We only need to worry about this here, because if `isFirstImportLine` = true, the only alternative
+      // `lineIndexModifier` is 1, which occurs when the file only has comments
+      const extraNewLine = isFirstImportLine ? '\n' : ''
+      builder.insert(new Position(lineIndex, 0), newLine + '\n' + extraNewLine)
     }
   })
 }
@@ -151,10 +159,9 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       break
     }
 
-    // If `lineIndex` has a value, then we have already found a line before/after which the new line should go.
-    // We are now continuing to loop only to see if there is a later line with a matching import path that should
-    // override the sort destination we computed.
-    if (lineIndex != null) continue
+    // If lineIndexModifier === -1, then we have already found a that the import should sort before.
+    // At this point, we're just looping in case there is an exact path that should override this.
+    if (lineIndexModifier === -1) continue
 
     // multiLineStart only matters if the paths match. If we've arrived here, the import that multiLineStart
     // currently refers to does not have a matching path.
@@ -216,10 +223,10 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       lineIndexModifier = 1
       continue
     }
-
+    
     // No special sorting
     lineIndex = i
-    if (linePath > importPath) lineIndexModifier = -1
+    lineIndexModifier = linePath > importPath ? -1 : 1
   }
 
   const isFirstImportLine = lineIndex == null
@@ -227,7 +234,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
   // If isFirstImportLine, find the first non-comment line.
   if (isFirstImportLine) {
     // If there is no line that doesn't start with a comment, we need lineIndexModifier to be 1.
-    // It will get set back to 0 if a line without a comment is encountered (see end of for loop)
+    // It will get set to -1 if a line without a comment is encountered (see end of for loop)
     lineIndexModifier = 1
     let isMultilineComment
     
@@ -243,7 +250,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
         if (line[1] === '*') isMultilineComment = true
         continue
       }
-      lineIndexModifier = 0
+      lineIndexModifier = -1
       break
     }
   }
@@ -252,11 +259,11 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
 }
 
 function getNewLineImports(lines, exportName, exportType, linePosition) {
-  const {lineIndex, lineIndexModifier, isFirstImportLine} = linePosition
+  const {lineIndex, multiLineStart, lineIndexModifier, isFirstImportLine} = linePosition
 
   const lineImports = lineIndexModifier || isFirstImportLine
     ? {named: [], types: []}
-    : getLineImports(lines, lineIndex)
+    : getLineImports(lines, multiLineStart == null ? lineIndex : multiLineStart)
   
   if (exportType === ExportType.default) {
     lineImports.default = exportName
@@ -352,5 +359,6 @@ function getRelativeImportPath(file, absImportPath) {
 
 module.exports = {
   buildImportItems,
+  buildTypeImportItems,
   insertImport,
 }

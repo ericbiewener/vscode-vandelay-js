@@ -1,8 +1,8 @@
-const {extensions} = require('vscode')
+const {extensions, commands} = require('vscode')
 const {cacheFile, processCachedData} = require('./cacher')
-const {buildImportItems, insertImport} = require('./importer')
+const {buildImportItems, insertImport, buildTypeImportItems} = require('./importer')
 
-async function activate() {
+async function activate(context) {
   const vandelay = await extensions.getExtension('edb.vandelay').activate()
 
   vandelay.registerPlugin({
@@ -15,5 +15,18 @@ async function activate() {
     buildImportItems,
     insertImport,
   })
+
+  const {selectImport, selectImportForActiveWord} = vandelay.commands
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      'vandelayJs.selectTypeImport',
+      () => selectImport(null, buildTypeImportItems)
+    ),
+    commands.registerCommand(
+      'vandelayJs.selectTypeImportForActiveWord',
+      () => selectImportForActiveWord(buildTypeImportItems)
+    ),
+  )
 }
 exports.activate = activate
