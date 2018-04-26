@@ -92,6 +92,7 @@ async function insertImport(plugin, importSelection) {
   
   const linePosition = getLinePosition(plugin, finalImportPath, isExtraImport, lines)
   const lineImports = getNewLineImports(lines, exportName, exportType, linePosition)
+  if (!lineImports) return
   const newLine = getNewLine(plugin, finalImportPath, lineImports)
   
   const {lineIndex, lineIndexModifier, multiLineStart, isFirstImportLine} = linePosition
@@ -266,11 +267,12 @@ function getNewLineImports(lines, exportName, exportType, linePosition) {
     : getLineImports(lines, multiLineStart == null ? lineIndex : multiLineStart)
   
   if (exportType === ExportType.default) {
+    if (lineImports.default) return
     lineImports.default = exportName
-  } else if (exportType === ExportType.named) {
-    lineImports.named.push(exportName)
   } else {
-    lineImports.types.push(exportName)
+    const arr = lineImports[exportType === ExportType.named ? 'named' : 'types']
+    if (arr.includes(exportName)) return
+    arr.push(exportName)
   }
 
   return lineImports
