@@ -4,3 +4,5 @@ node_modules
 *.code-workspace
 vandelay-core
 TODO.md
+_alias*
+test-workspaces

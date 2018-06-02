@@ -32,7 +32,6 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       if (lineImports.named) existing.named = _.union(lineImports.named, existing.named)
       if (lineImports.types) existing.types = _.union(lineImports.types, existing.types)
       data._extraImports[linePath] = existing
-      return
     }
 
     if (!line.startsWith('export ')) return

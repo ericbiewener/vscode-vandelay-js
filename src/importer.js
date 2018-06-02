@@ -12,6 +12,7 @@ const ExportType = {
 }
 
 function buildImportItems(plugin, exportData) {
+  console.log(exportData)
   const {projectRoot, shouldIncludeImport} = plugin
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
@@ -19,7 +20,7 @@ function buildImportItems(plugin, exportData) {
   for (const importPath of Object.keys(exportData).sort()) {
     const absImportPath = path.join(projectRoot, importPath)
     if (absImportPath === activeFilepath) continue
-    if (shouldIncludeImport && !shouldIncludeImport(path.join(projectRoot, importPath), activeFilepath)) {
+    if (shouldIncludeImport && !shouldIncludeImport(absImportPath, activeFilepath)) {
       continue
     }
     
@@ -160,7 +161,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
       break
     }
 
-    // If lineIndexModifier === -1, then we have already found a that the import should sort before.
+    // If lineIndexModifier === -1, then we have already found a path that the import should sort before.
     // At this point, we're just looping in case there is an exact path that should override this.
     if (lineIndexModifier === -1) continue
 
