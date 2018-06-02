@@ -1,8 +1,4 @@
 node_modules
 .vscode-test/
 *.vsix
-*.code-workspace
-vandelay-core
 TODO.md
-_alias*
-test-workspaces

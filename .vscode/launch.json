@@ -11,7 +11,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/test-workspaces/single-root.code-workspace",
+                "${workspaceFolder}/../test-workspaces/single-root.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ]
         },
@@ -21,7 +21,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/test-workspaces/multi-root.code-workspace",
+                "${workspaceFolder}/../test-workspaces/multi-root.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ]
         },
