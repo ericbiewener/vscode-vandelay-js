@@ -34,22 +34,7 @@ function isPathNodeModule(plugin, importPath) {
   return !plugin.absolutePaths.some(p => p === importPath || importPath.startsWith(p + '/'))
 }
 
-function getLineImports(lines, lineIndex) {
-  let importText
-  const line = lines[lineIndex]
-  
-  if (line.includes(' from ')) {
-    importText = line
-  }
-  else {
-    for (let i = lineIndex; i < lines.length; i++) {
-      if (lines[i].includes(' from ')) {
-        importText = lines.slice(lineIndex, i + 1).join(' ')
-        break
-      }
-    }
-  }
-
+function getLineImports(importText) {
   if (!importText) return
   
   const imports = {named: [], types: []}

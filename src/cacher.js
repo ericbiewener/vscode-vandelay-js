@@ -24,8 +24,12 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       
       const linePath = parseLineImportPath(line)
       if (!isPathNodeModule(plugin, linePath)) return
-      
-      const lineImports = getLineImports(lines, importStartLine)
+
+      // Get import text as a single line
+      // Create array starting at current line so that findIndex will search after the current line
+      const slicedLines = lines.slice(importStartLine)
+      const lineImportText = slicedLines.slice(0, slicedLines.findIndex(l => l.includes(' from ')) + 1).join(' ')
+      const lineImports = getLineImports(lineImportText)
       const existing = data._extraImports[linePath] || {isExtraImport: true}
       
       if (lineImports.default) existing.default = lineImports.default
