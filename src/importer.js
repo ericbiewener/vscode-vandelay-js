@@ -140,96 +140,106 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
   let lineIndex
   let lineIndexModifier = 1
 
-  let multiLineStart
+  let start
+
+  const importLines = {}
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
-    
-    if (multiLineStart != null) {
-      if (!line.includes(' from ')) continue
-    } else {
-      if (!line.startsWith('import')) continue
-      if (!line.includes(' from ')) {
-        multiLineStart = i
-        continue
-      }
-    }
+    const isImportStart = line.startsWith('import')
+    const isImportEnd = line.includes(' from ')
 
-    const linePath = parseLineImportPath(line)
-    if (linePath === importPath) {
-      lineIndex = i
-      lineIndexModifier = 0
-      break
-    }
-
-    // If lineIndexModifier === -1, then we have already found a path that the import should sort before.
-    // At this point, we're just looping in case there is an exact path that should override this.
-    if (lineIndexModifier === -1) continue
-
-    // multiLineStart only matters if the paths match. If we've arrived here, the import that multiLineStart
-    // currently refers to does not have a matching path.
-    multiLineStart = null
-
-    const lineSettingsPos = plugin.importOrderMap[linePath]
-
-    // If import exists in plugin.importOrder
-    if (settingsPos != null) {
-      if (lineSettingsPos == null || lineSettingsPos > settingsPos) {
-        lineIndex = i
-        lineIndexModifier = -1
-        continue
-      }
-      else {
-        lineIndex = i
-        lineIndexModifier = 1
-        continue
-      }
-    }
-    
-    // If import does not exist in plugin.importOrder but line does
-    if (lineSettingsPos != null) {
-      lineIndex = i
-      lineIndexModifier = 1
+    if (!isImportStart && start == null) {
+      const trimmedLine = line.trim()
+      if (trimmedLine && !trimmedLine.startsWith('/')) break // no longer in import section
       continue
     }
 
-    const lineIsNodeModule = isPathNodeModule(plugin, linePath)
+    if (isImportStart) start = i
+    if (!isImportEnd) continue
 
-    // If import is a node module
-    if (
-      isExtraImport
-      && (!lineIsNodeModule || importPath < linePath)
-    ) {
-      lineIndex = i
-      lineIndexModifier = -1
-      continue
-    }
-    // If line is a node module but we didn't break above, then import must come after it
-    if (lineIsNodeModule) {
-      lineIndex = i
-      lineIndexModifier = 1
-      continue
-    }
-
-    const lineIsAbsolute = !linePath.startsWith('.')
-
-    // If import is absolute path
-    if (!importPath.startsWith('.')) {
-      if (!lineIsAbsolute) {
-        lineIndex = i
-        lineIndexModifier = -1
-        continue
-      }
-    }
-    else if (lineIsAbsolute) {
-      lineIndex = i
-      lineIndexModifier = 1
-      continue
-    }
-    
-    // No special sorting
-    lineIndex = i
-    lineIndexModifier = linePath > importPath ? -1 : 1
+    importLines[parseLineImportPath(line)] = {start, end: i}
   }
+
+  console.log(importLines)
+  return
+
+  //   const linePath = parseLineImportPath(line)
+  //   if (linePath === importPath) {
+  //     lineIndex = i
+  //     lineIndexModifier = 0
+  //     break
+  //   }
+
+  //   // If lineIndexModifier === -1, then we have already found a path that the import should sort before.
+  //   // At this point, we're just looping in case there is an exact path that should override this.
+  //   if (lineIndexModifier === -1) continue
+
+  //   // multiLineStart only matters if the paths match. If we've arrived here, the import that multiLineStart
+  //   // currently refers to does not have a matching path.
+  //   multiLineStart = null
+
+  //   const lineSettingsPos = plugin.importOrderMap[linePath]
+
+  //   // If import exists in plugin.importOrder
+  //   if (settingsPos != null) {
+  //     if (lineSettingsPos == null || lineSettingsPos > settingsPos) {
+  //       lineIndex = i
+  //       lineIndexModifier = -1
+  //       continue
+  //     }
+  //     else {
+  //       lineIndex = i
+  //       lineIndexModifier = 1
+  //       continue
+  //     }
+  //   }
+    
+  //   // If import does not exist in plugin.importOrder but line does
+  //   if (lineSettingsPos != null) {
+  //     lineIndex = i
+  //     lineIndexModifier = 1
+  //     continue
+  //   }
+
+  //   const lineIsNodeModule = isPathNodeModule(plugin, linePath)
+
+  //   // If import is a node module
+  //   if (
+  //     isExtraImport
+  //     && (!lineIsNodeModule || importPath < linePath)
+  //   ) {
+  //     lineIndex = i
+  //     lineIndexModifier = -1
+  //     continue
+  //   }
+  //   // If line is a node module but we didn't break above, then import must come after it
+  //   if (lineIsNodeModule) {
+  //     lineIndex = i
+  //     lineIndexModifier = 1
+  //     continue
+  //   }
+
+  //   const lineIsAbsolute = !linePath.startsWith('.')
+
+  //   // If import is absolute path
+  //   if (!importPath.startsWith('.')) {
+  //     if (!lineIsAbsolute) {
+  //       lineIndex = i
+  //       lineIndexModifier = -1
+  //       continue
+  //     }
+  //   }
+  //   else if (lineIsAbsolute) {
+  //     lineIndex = i
+  //     lineIndexModifier = 1
+  //     continue
+  //   }
+    
+  //   // No special sorting
+  //   lineIndex = i
+  //   lineIndexModifier = linePath > importPath ? -1 : 1
+  // }
 
   const isFirstImportLine = lineIndex == null
 
