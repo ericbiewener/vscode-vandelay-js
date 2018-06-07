@@ -169,6 +169,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
     const lineData = {start, end: i}
     if (linePath === importPath) return lineData // Return start/end data immediately if matching path found
     importLineData[linePath] = lineData
+    start = null
   }
 
   const paths = Reflect.ownKeys(importLineData)
@@ -201,7 +202,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
   }
 
   const importPos = plugin.importOrderMap[importPath]
-  const importIsAbsolute = importPath.startsWith('.')
+  const importIsAbsolute = !importPath.startsWith('.')
   
   for (let i = 0; i < paths.length; i++) {
     const linePath = paths[i]
@@ -225,7 +226,7 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
 
     // Absolute path check
     const lineIsAbsolute = !linePath.startsWith('.')
-    if (!importIsAbsolute && (!lineIsAbsolute || importPath < linePath)) {
+    if (importIsAbsolute && (!lineIsAbsolute || importPath < linePath)) {
       return {start: importLineData[linePath].start, lineIndexModifier: -1}
     } else if (lineIsAbsolute) {
       continue
