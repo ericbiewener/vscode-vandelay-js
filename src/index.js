@@ -7,13 +7,18 @@ async function activate(context) {
 
   vandelay.registerPlugin({
     language: 'js',
-    finalizePlugin(plugin) {
-      plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
-    },
     cacheFile,
     processCachedData,
     buildImportItems,
     insertImport,
+    padCurlyBraces: true,
+    useSemicolons: true,
+    commaDangle: false,
+    multilineImportStyle: 'multi',
+    quoteType: 'single',
+    finalizePlugin(plugin) {
+      plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
+    },
   })
 
   const {selectImport, selectImportForActiveWord} = vandelay.commands

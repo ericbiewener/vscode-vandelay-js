@@ -1,9 +1,9 @@
 // TODO: to support importing when `require` is used rather than `import from`, look for the last line that has a
 // `require` statement but no indentation. That ensures you aren't dealing with a local require
-const {window, Range, Position} = require('vscode')
+const {window} = require('vscode')
 const path = require('path')
 const _ = require('lodash')
-const {trimPath, parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
+const {parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
 
 const ExportType = {
   default: 0,
@@ -96,7 +96,7 @@ function buildTypeImportItems(plugin, exportData) {
   return buildImportItems(plugin, exportData).filter(e => e.exportType === ExportType.type)
 }
 
-async function insertImport(plugin, importSelection) {
+function insertImport(plugin, importSelection) {
   const {label: exportName, description: importPath, absImportPath, exportType, isExtraImport} = importSelection
   const editor = window.activeTextEditor
 
@@ -104,26 +104,11 @@ async function insertImport(plugin, importSelection) {
   const lines = editor.document.getText().split('\n')
   
   const linePosition = getLinePosition(plugin, finalImportPath, isExtraImport, lines)
-  const lineImports = getNewLineImports(lines, exportName, exportType, linePosition)
+  const lineImports = getNewLineImports(plugin, lines, exportName, exportType, linePosition)
   if (!lineImports) return
   const newLine = getNewLine(plugin, finalImportPath, lineImports)
-  
-  const {start, lineIndexModifier, isFirstImportLine} = linePosition
-  const end = linePosition.end || start
-  
-  await editor.edit(builder => {
-    if (!lineIndexModifier) {
-      builder.replace(new Range(start, 0, end, lines[end].length), newLine)
-    } else if (lineIndexModifier === 1) {
-      builder.insert(new Position(end, lines[end].length), '\n' + newLine)
-    } else { // -1
-      // If it's the first import line, then add an extra new line between it and the subsequent non-import code.
-      // We only need to worry about this here, because if `isFirstImportLine` = true, the only alternative
-      // `lineIndexModifier` is 1, which occurs when the file only has comments
-      const extraNewLine = isFirstImportLine ? '\n' : ''
-      builder.insert(new Position(end, 0), newLine + '\n' + extraNewLine)
-    }
-  })
+
+  plugin.utils.insertLine(newLine, linePosition, lines)
 }
 
 function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
@@ -134,12 +119,12 @@ function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
 
   if (plugin.processImportPath) {
     const processedPath = plugin.processImportPath(importPath, absImportPath, activeFilepath, plugin.projectRoot)
-    return trimPath(processedPath || importPath)
+    return plugin.utils.removeExt(processedPath || importPath)
   }
 
   return path.basename(importPath) === 'index.js'
     ? path.dirname(importPath)
-    : trimPath(importPath)
+    : plugin.utils.removeExt(importPath)
 }
 
 /**
@@ -152,20 +137,20 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
   const importLineData = {}
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
+    const line = lines[i].trim()
+    if (!line) continue
+    
     const isImportStart = line.startsWith('import')
-    const isImportEnd = line.includes(' from ')
 
     if (!isImportStart && start == null) {
-      const trimmedLine = line.trim()
-      if (trimmedLine && !trimmedLine.startsWith('/')) break // no longer in import section
+      if (!line.startsWith('/')) break // no longer in import section
       continue
     }
 
     if (isImportStart) start = i
-    if (!isImportEnd) continue
+    if (!line.includes(' from ')) continue
 
-    const linePath = parseLineImportPath(line)
+    const linePath = parseLineImportPath(plugin, line)
     const lineData = {start, end: i}
     if (linePath === importPath) return lineData // Return start/end data immediately if matching path found
     importLineData[linePath] = lineData
@@ -185,9 +170,9 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
     for (let i = 0; i < lines.length; i++) {
       // Don't use lineIndex as incrementor in for-loop declaration because it will get incremented one time too many
       lineIndex = i
-      const line = lines[i]
+      const line = lines[i].trim()
       if (isMultilineComment) {
-        if (line.includes('*/')) isMultilineComment = false
+        if (line.endsWith('*/')) isMultilineComment = false
         continue
       }
       if (line.startsWith('/')) {
@@ -241,12 +226,12 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
   }
 }
 
-function getNewLineImports(lines, exportName, exportType, linePosition) {
+function getNewLineImports(plugin, lines, exportName, exportType, linePosition) {
   const {start, end, lineIndexModifier, isFirstImportLine} = linePosition
 
   const lineImports = lineIndexModifier || isFirstImportLine
     ? {named: [], types: []}
-    : getLineImports(lines.slice(start, end + 1).join(' '))
+    : getLineImports(plugin, lines.slice(start, end + 1).join(' '))
   
   if (exportType === ExportType.default) {
     if (lineImports.default) return
@@ -287,8 +272,7 @@ function getNewLine(plugin, importPath, imports) {
 
   // Split up line if necessary
 
-  const {options} = window.activeTextEditor
-  const tabChar = options.insertSpaces ? _.repeat(' ', options.tabSize) : '\t'
+  const tabChar = plugin.utils.getTabChar()
   const newLineLength = newLineStart.length + newLineMiddle.length + newLineEnd.length
 
   // If line is short enough OR there are no named/type imports, no need to split into multiline

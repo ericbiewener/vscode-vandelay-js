@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
-const {trimPath, parseLineImportPath, strUntil, isPathNodeModule, getLineImports} = require('./utils')
+const {basename, parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
 
 
 function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
@@ -22,14 +22,14 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       const importStartLine = isImportStart ? i : multiLineStart
       multiLineStart = null
       
-      const linePath = parseLineImportPath(line)
+      const linePath = parseLineImportPath(plugin, line)
       if (!isPathNodeModule(plugin, linePath)) return
 
       // Get import text as a single line
       // Create array starting at current line so that findIndex will search after the current line
       const slicedLines = lines.slice(importStartLine)
       const lineImportText = slicedLines.slice(0, slicedLines.findIndex(l => l.includes(' from ')) + 1).join(' ')
-      const lineImports = getLineImports(lineImportText)
+      const lineImports = getLineImports(plugin, lineImportText)
       const existing = data._extraImports[linePath] || {isExtraImport: true}
       
       if (lineImports.default) existing.default = lineImports.default
@@ -44,19 +44,19 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     switch (words[1]) {
       case 'default':
         if (filepath.endsWith('index.js')) {
-          fileExports.default = trimPath(path.dirname(filepath), true)
+          fileExports.default = basename(path.dirname(filepath))
         } else {
           if (plugin.processDefaultName) {
             const name = plugin.processDefaultName(filepath)
             if (name) fileExports.default = name
           }
-          if (!fileExports.default) fileExports.default = trimPath(filepath, true)
+          if (!fileExports.default) fileExports.default = basename(filepath)
         }
         return
 
       case 'type':
         fileExports.types = fileExports.types || []
-        fileExports.types.push(strUntil(words[2], '<')) // strip off generics
+        fileExports.types.push(plugin.utils.strUntil(words[2], '<')) // strip off generics
         return
 
       case 'const':
@@ -65,21 +65,21 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       case 'function':
       case 'class':
         fileExports.named = fileExports.named || []
-        fileExports.named.push(strUntil(words[2], /\W/))
+        fileExports.named.push(plugin.utils.strUntil(words[2], /\W/))
         return
 
       case '*':
         fileExports.all = fileExports.all || []
-        fileExports.all.push(parseLineImportPath(words[3]))
+        fileExports.all.push(parseLineImportPath(plugin, words[3]))
         return
 
       case '{':
-        processReexportNode(fileExports, fileExports.named, line)
+        processReexportNode(plugin, fileExports, fileExports.named, line)
         return
 
       default:
         fileExports.named = fileExports.named || []
-        fileExports.named.push(strUntil(words[1], /\W/))
+        fileExports.named.push(plugin.utils.strUntil(words[1], /\W/))
         return
     }
   })
@@ -92,12 +92,12 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
   return data
 }
 
-function processReexportNode(fileExports, exportArray = [], line) {
+function processReexportNode(plugin, fileExports, exportArray = [], line) {
   const end = line.indexOf('}')
   if (end < 0) return
   
   if (!fileExports.reexports) fileExports.reexports = {}
-  const subfilepath = parseLineImportPath(line)
+  const subfilepath = parseLineImportPath(plugin, line)
   if (!fileExports.reexports[subfilepath]) fileExports.reexports[subfilepath] = []
   const reexports = fileExports.reexports[subfilepath]
 
@@ -158,8 +158,4 @@ function getSubfileData(mainFilepath, filename, data) {
 module.exports = {
   cacheFile,
   processCachedData,
-  _test: {
-    processReexportNode,
-    getSubfileData,
-  }
 }
