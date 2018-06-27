@@ -10,6 +10,7 @@ function parseLineImportPath(plugin, line) {
 
 function isPathNodeModule(plugin, importPath) {
   if (importPath.startsWith('.')) return false
+  if (!plugin.absolutePaths) return true
   return !plugin.absolutePaths.some(p => p === importPath || importPath.startsWith(p + '/'))
 }
 

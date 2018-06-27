@@ -30,7 +30,7 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       const slicedLines = lines.slice(importStartLine)
       const lineImportText = slicedLines.slice(0, slicedLines.findIndex(l => l.includes(' from ')) + 1).join(' ')
       const lineImports = getLineImports(plugin, lineImportText)
-      const existing = data._extraImports[linePath] || {isExtraImport: true}
+      const existing = data._extraImports[linePath] || {}
       
       if (lineImports.default) existing.default = lineImports.default
       if (lineImports.named) existing.named = _.union(lineImports.named, existing.named)

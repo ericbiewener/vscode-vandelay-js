@@ -1,6 +1,6 @@
 // TODO: to support importing when `require` is used rather than `import from`, look for the last line that has a
 // `require` statement but no indentation. That ensures you aren't dealing with a local require
-const {window} = require('vscode')
+const {window, languages} = require('vscode')
 const path = require('path')
 const _ = require('lodash')
 const {parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
@@ -12,6 +12,7 @@ const ExportType = {
 }
 
 function buildImportItems(plugin, exportData) {
+  console.log(languages)
   const {projectRoot, shouldIncludeImport} = plugin
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
@@ -216,6 +217,9 @@ function getLinePosition(plugin, importPath, isExtraImport, lines) {
     } else if (lineIsAbsolute) {
       continue
     }
+
+    // Alphabetical
+    if (importPath < linePath) return {start: importLineData[linePath].start, lineIndexModifier: -1}
   }
 
   // Since we didn't find a line to sort the new import before, it will go after the last import
