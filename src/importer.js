@@ -12,7 +12,6 @@ const ExportType = {
 }
 
 function buildImportItems(plugin, exportData) {
-  console.log(languages)
   const {projectRoot, shouldIncludeImport} = plugin
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
