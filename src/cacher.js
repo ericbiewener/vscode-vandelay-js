@@ -2,43 +2,28 @@ const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
 const {basename, parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
+const {parseImports} = require('./regex')
 
 
 function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
   const fileExports = {}
-  const lines = fs.readFileSync(filepath, 'utf8').split('\n')
-  let multiLineStart
+  const fileText = fs.readFileSync(filepath, 'utf8')
+  const imports = parseImports(fileText)
 
-  lines.forEach((line, i) => {
-    // Cache node_modules in _extraImports
-    const isImportStart = line.startsWith('import ')
-    if (isImportStart || multiLineStart != null) {
-      
-      if (!line.includes(' from ')) {
-        if (isImportStart) multiLineStart = i
-        return
-      }
+  for (const importData of imports) {
+    if (!isPathNodeModule(plugin, importData.path)) continue
+    const existing = data._extraImports[importData.path] || {}
+    data._extraImports[importData.path] = existing
+    if (importData.default) existing.default = importData.default
+    if (importData.named) existing.named = _.union(existing.named, importData.named)
+    if (importData.types) existing.types = _.union(existing.types, importData.types)
+  }
 
-      const importStartLine = isImportStart ? i : multiLineStart
-      multiLineStart = null
-      
-      const linePath = parseLineImportPath(plugin, line)
-      if (!isPathNodeModule(plugin, linePath)) return
+  const lines = fileText.split('\n')
 
-      // Get import text as a single line
-      // Create array starting at current line so that findIndex will search after the current line
-      const slicedLines = lines.slice(importStartLine)
-      const lineImportText = slicedLines.slice(0, slicedLines.findIndex(l => l.includes(' from ')) + 1).join(' ')
-      const lineImports = getLineImports(plugin, lineImportText)
-      const existing = data._extraImports[linePath] || {}
-      
-      if (lineImports.default) existing.default = lineImports.default
-      if (lineImports.named) existing.named = _.union(lineImports.named, existing.named)
-      if (lineImports.types) existing.types = _.union(lineImports.types, existing.types)
-      data._extraImports[linePath] = existing
-    }
-
-    if (!line.startsWith('export ')) return
+  // TODO: replace with regex
+  for (const line of lines) {
+    if (!line.startsWith('export ')) continue
 
     const words = line.trim().split(/ +/)
     switch (words[1]) {
@@ -52,12 +37,12 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
           }
           if (!fileExports.default) fileExports.default = basename(filepath)
         }
-        return
+        continue
 
       case 'type':
         fileExports.types = fileExports.types || []
         fileExports.types.push(plugin.utils.strUntil(words[2], '<')) // strip off generics
-        return
+        continue
 
       case 'const':
       case 'let':
@@ -66,23 +51,22 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       case 'class':
         fileExports.named = fileExports.named || []
         fileExports.named.push(plugin.utils.strUntil(words[2], /\W/))
-        return
+        continue
 
       case '*':
         fileExports.all = fileExports.all || []
         fileExports.all.push(parseLineImportPath(plugin, words[3]))
-        return
+        continue
 
       case '{':
         processReexportNode(plugin, fileExports, fileExports.named, line)
-        return
+        continue
 
       default:
         fileExports.named = fileExports.named || []
         fileExports.named.push(plugin.utils.strUntil(words[1], /\W/))
-        return
     }
-  })
+  }
 
   if (!_.isEmpty(fileExports)) {
     const filePathKey = plugin.utils.getFilepathKey(filepath)
@@ -93,6 +77,9 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
 }
 
 function processReexportNode(plugin, fileExports, exportArray = [], line) {
+  // TODO: replace with regex. this breaks if reexporting is multiline, eg
+  // export { blah, blah, blah,
+  //   blah, blah } from './mypath'
   const end = line.indexOf('}')
   if (end < 0) return
   

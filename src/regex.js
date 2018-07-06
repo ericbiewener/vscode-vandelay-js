@@ -1,4 +1,4 @@
-import _ from 'lodash'
+const _ = require('lodash')
 
 /**
  * Regex must end with `.*` after last capturing group to ensure that we capture the full line.
@@ -28,8 +28,9 @@ function parseImports(text) {
         .map(i => i.trim())
 
       const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
-      results.typesnamed = groups[0]
-      results.named = groups[1]
+      if (groups[0].length) results.types = groups[0].map(i => i.slice(5).trim())
+      if (groups[1].length) results.named = groups[1]
+      console.log(results.types)
     }
     imports.push(results)
   }

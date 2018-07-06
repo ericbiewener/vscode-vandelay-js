@@ -1,6 +1,7 @@
 const {extensions, commands} = require('vscode')
 const {cacheFile, processCachedData} = require('./cacher')
-const {buildImportItems, insertImport, buildTypeImportItems} = require('./importer')
+const {insertImport} = require('./importing/importer')
+const {buildImportItems, buildTypeImportItems} = require('./importing/buildImportItems')
 
 async function activate(context) {
   const vandelay = await extensions.getExtension('edb.vandelay').activate()
