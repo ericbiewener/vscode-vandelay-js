@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
-const {basename, parseLineImportPath, isPathNodeModule, getLineImports} = require('./utils')
+const {basename, parseLineImportPath, isPathNodeModule} = require('./utils')
 const {parseImports} = require('./regex')
 
 

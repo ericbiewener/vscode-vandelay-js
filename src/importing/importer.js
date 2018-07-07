@@ -1,27 +1,43 @@
 // TODO: to support importing when `require` is used rather than `import from`, look for the last line that has a
 // `require` statement but no indentation. That ensures you aren't dealing with a local require
-const {window} = require('vscode')
+const { window } = require('vscode')
 const path = require('path')
-const {parseImports} = require('../regex')
-const {getLineImports} = require('../utils')
-const {getImportPosition} = require('./getImportPosition')
-const {ExportType} = require('./buildImportItems')
-const {getNewLine} = require('./getNewLine')
+const { parseImports } = require('../regex')
+const { getImportPosition } = require('./getImportPosition')
+const { ExportType } = require('./buildImportItems')
+const { getNewLine } = require('./getNewLine')
 
 function insertImport(plugin, importSelection) {
-  const {label: exportName, description: importPath, absImportPath, exportType, isExtraImport} = importSelection
+  const {
+    label: exportName,
+    description: importPath,
+    absImportPath,
+    exportType,
+    isExtraImport,
+  } = importSelection
   const editor = window.activeTextEditor
 
-  const finalImportPath = getFinalImportPath(plugin, importPath, absImportPath, isExtraImport)
+  const finalImportPath = getFinalImportPath(
+    plugin,
+    importPath,
+    absImportPath,
+    isExtraImport
+  )
   const fileText = editor.document.getText()
   const imports = parseImports(fileText)
-  
-  const linePosition = getImportPosition(plugin, finalImportPath, isExtraImport, imports, fileText)
-  const lineImports = getNewLineImports(plugin, lines, exportName, exportType, linePosition)
+
+  const importPosition = getImportPosition(
+    plugin,
+    finalImportPath,
+    isExtraImport,
+    imports,
+    fileText
+  )
+  const lineImports = getNewLineImports(importPosition, exportName, exportType)
   if (!lineImports) return
   const newLine = getNewLine(plugin, finalImportPath, lineImports)
 
-  plugin.utils.insertLine(newLine, linePosition, lines)
+  plugin.utils.insertLine(newLine, importPosition)
 }
 
 function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
@@ -31,7 +47,12 @@ function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
   importPath = getRelativeImportPath(activeFilepath, absImportPath)
 
   if (plugin.processImportPath) {
-    const processedPath = plugin.processImportPath(importPath, absImportPath, activeFilepath, plugin.projectRoot)
+    const processedPath = plugin.processImportPath(
+      importPath,
+      absImportPath,
+      activeFilepath,
+      plugin.projectRoot
+    )
     return plugin.utils.removeExt(processedPath || importPath)
   }
 
@@ -40,23 +61,23 @@ function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
     : plugin.utils.removeExt(importPath)
 }
 
-function getNewLineImports(plugin, lines, exportName, exportType, linePosition) {
-  const {start, end, lineIndexModifier, isFirstImportLine} = linePosition
+function getNewLineImports(importPosition, exportName, exportType) {
+  const { match, indexModifier } = importPosition
 
-  const lineImports = lineIndexModifier || isFirstImportLine
-    ? {named: [], types: []}
-    : getLineImports(plugin, lines.slice(start, end + 1).join(' '))
-  
+  const imports = indexModifier
+    ? { named: [], types: [] }
+    : match
+
   if (exportType === ExportType.default) {
-    if (lineImports.default) return
-    lineImports.default = exportName
+    if (imports.default) return
+    imports.default = exportName
   } else {
-    const arr = lineImports[exportType === ExportType.named ? 'named' : 'types']
+    const arr = imports[exportType === ExportType.named ? 'named' : 'types']
     if (arr.includes(exportName)) return
     arr.push(exportName)
   }
 
-  return lineImports
+  return imports
 }
 
 function getRelativeImportPath(file, absImportPath) {
