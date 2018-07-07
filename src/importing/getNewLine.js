@@ -1,0 +1,78 @@
+function getNewLine(plugin, importPath, imports) {
+  const {padCurlyBraces, quoteType, useSemicolons, maxImportLineLength, multilineImportStyle, commaDangle} = plugin
+
+  imports.named.sort()
+  imports.types.sort()
+  const nonDefaultImports = imports.named.concat(imports.types.map(t => 'type ' + t))
+
+  let newLineStart = 'import'
+  if (imports.default) newLineStart += ' ' + imports.default
+
+  let newLineMiddle = ''
+  let newLineEnd = ''
+  if (nonDefaultImports.length) {
+    if (imports.default) newLineStart += ','
+    newLineStart += ' {'
+    if (padCurlyBraces) newLineStart += ' '
+    newLineMiddle = nonDefaultImports.join(', ')
+    if (padCurlyBraces) newLineEnd += ' '
+    newLineEnd += '}'
+  }
+
+  const quoteChar = quoteType === 'single' ? '\'' : '"'
+  newLineEnd += ' from ' + quoteChar + importPath + quoteChar
+  if (useSemicolons) newLineEnd += ';'
+
+  // Split up line if necessary
+
+  const tabChar = plugin.utils.getTabChar()
+  const newLineLength = newLineStart.length + newLineMiddle.length + newLineEnd.length
+
+  // If line is short enough OR there are no named/type imports, no need to split into multiline
+  if (newLineLength <= maxImportLineLength || !nonDefaultImports.length) {
+    return newLineStart + newLineMiddle + newLineEnd
+  }
+
+  if (multilineImportStyle === 'single') {
+    // trim start & end to remove possible curly brace padding
+    const final = newLineStart.trim()
+      + '\n'
+      + tabChar
+      + nonDefaultImports.join(',\n' + tabChar)
+      + (commaDangle ? ',' : '')
+      + '\n'
+      + newLineEnd.trim()
+
+    return final
+  }
+
+  let line = newLineStart
+  let fullText = ''
+
+  nonDefaultImports.forEach((name, i) => {
+    const isLast = i === nonDefaultImports.length - 1
+
+    let newText = (i > 0 ? ' ' : '') + name
+    if (!isLast) newText += ','
+
+    const newLength = line.length + newText.length
+    // If it's the last import, we need to make sure that the line end "from ..." text will also fit on the line before
+    // appending the new import text.
+    if (
+      (!isLast && newLength <= maxImportLineLength)
+      || (isLast && newLength + newLineEnd <= maxImportLineLength)
+    ) {
+      line += newText
+    } else {
+      const newLine = tabChar + newText
+      fullText += line + '\n' + newLine
+      line = newLine
+    }
+  })
+
+  return fullText + newLineEnd
+}
+
+module.exports = {
+  getNewLine,
+}

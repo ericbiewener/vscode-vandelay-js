@@ -10,7 +10,9 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": ["*"],
+    "activationEvents": [
+        "*"
+    ],
     "contributes": {
         "commands": [
             {
