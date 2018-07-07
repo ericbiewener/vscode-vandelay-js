@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { getLastInitialComment, } = require('../regex')
+const { commentRegex, } = require('../regex')
 const { isPathNodeModule, } = require('../utils')
 
 /**
@@ -12,7 +12,7 @@ function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
   // If no imports, find first non-comment line
   if (!imports.length) {
     return {
-      match: getLastInitialComment(text),
+      match: plugin.utils.getLastInitialComment(text, commentRegex),
       indexModifier: 1,
       isFirstImport: true,
     }

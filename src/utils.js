@@ -4,10 +4,6 @@ function basename(filepath) {
   return path.basename(filepath, path.extname(filepath))
 }
 
-function parseLineImportPath(plugin, line) {
-  return plugin.utils.strBetween(line, /['"]/)
-}
-
 function isPathNodeModule(plugin, importPath) {
   if (importPath.startsWith('.')) return false
   if (!plugin.absolutePaths) return true
@@ -16,6 +12,5 @@ function isPathNodeModule(plugin, importPath) {
 
 module.exports = {
   basename,
-  parseLineImportPath,
   isPathNodeModule,
 }

@@ -19,7 +19,7 @@ function parseImports(text) {
       path: match[3],
       start: match.index,
       end: match.index + match[0].length,
-      default: match[1]
+      default: match[1],
     }
     if (match[2]) {
       const namedAndTypes = match[2]
@@ -28,9 +28,9 @@ function parseImports(text) {
         .map(i => i.trim())
 
       const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
-      if (groups[0].length) results.types = groups[0].map(i => i.slice(5).trim())
+      if (groups[0].length)
+        results.types = groups[0].map(i => i.slice(5).trim())
       if (groups[1].length) results.named = groups[1]
-      console.log(results.types)
     }
     imports.push(results)
   }
@@ -39,26 +39,16 @@ function parseImports(text) {
   return imports
 }
 
-// Comments
-const comments = /^(?:[ \t]*\/\/|[ \t]*\/\*[^]*?\*\/)/gm
+const commentRegex = /^(?:[ \t]*\/\/|[ \t]*\/\*[^]*?\*\/)/gm
 
-// #TODO: make part of vandelay-core, that accepts args of `text, singleLineRegex, multilineRegex`
-function getLastInitialComment(text) {
-  // Iterates over comment line matches. If one doesn't begin where the previous one left off, this means
-  // a non comment line came between them.
-  let expectedNextIndex = 0
-  let match
-  let prevMatch
-  while ((match = comments.exec(text))) {
-    if (match.index !== expectedNextIndex) break
-    expectedNextIndex = comments.lastIndex + 1
-    prevMatch = match
-  }
-
-  return prevMatch
+const exportRegex = {
+  standard: /^export +(\w+)(?: +(\w+))?/gm,
+  fullRexport: /^export +\*.+?['|"](.+)['|"]/gm,
+  selectiveRexport: /^export +{([^]+?)}.+?['|"](.+)['|"]/gm,
 }
 
 module.exports = {
   parseImports,
-  getLastInitialComment
+  exportRegex,
+  commentRegex,
 }

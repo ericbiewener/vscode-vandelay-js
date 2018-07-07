@@ -1,8 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
-const {basename, parseLineImportPath, isPathNodeModule} = require('./utils')
-const {parseImports} = require('./regex')
+const {basename, isPathNodeModule} = require('./utils')
+const {parseImports, exportRegex} = require('./regex')
 
 
 function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
@@ -19,53 +19,49 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     if (importData.types) existing.types = _.union(existing.types, importData.types)
   }
 
-  const lines = fileText.split('\n')
-
-  // TODO: replace with regex
-  for (const line of lines) {
-    if (!line.startsWith('export ')) continue
-
-    const words = line.trim().split(/ +/)
-    switch (words[1]) {
-      case 'default':
-        if (filepath.endsWith('index.js')) {
-          fileExports.default = basename(path.dirname(filepath))
-        } else {
-          if (plugin.processDefaultName) {
-            const name = plugin.processDefaultName(filepath)
-            if (name) fileExports.default = name
-          }
-          if (!fileExports.default) fileExports.default = basename(filepath)
+  let match
+  while (match = exportRegex.standard.exec(fileText)) {
+    if (match[1] === 'default') {
+      if (filepath.endsWith('index.js')) {
+        fileExports.default = basename(path.dirname(filepath))
+      } else {
+        if (plugin.processDefaultName) {
+          const name = plugin.processDefaultName(filepath)
+          if (name) fileExports.default = name
         }
-        continue
-
-      case 'type':
-        fileExports.types = fileExports.types || []
-        fileExports.types.push(plugin.utils.strUntil(words[2], '<')) // strip off generics
-        continue
-
-      case 'const':
-      case 'let':
-      case 'var':
-      case 'function':
-      case 'class':
-        fileExports.named = fileExports.named || []
-        fileExports.named.push(plugin.utils.strUntil(words[2], /\W/))
-        continue
-
-      case '*':
-        fileExports.all = fileExports.all || []
-        fileExports.all.push(parseLineImportPath(plugin, words[3]))
-        continue
-
-      case '{':
-        processReexportNode(plugin, fileExports, fileExports.named, line)
-        continue
-
-      default:
-        fileExports.named = fileExports.named || []
-        fileExports.named.push(plugin.utils.strUntil(words[1], /\W/))
+        if (!fileExports.default) fileExports.default = basename(filepath)
+      }
+    } else if (!match[2]) { // export myVar;
+      fileExports.named = fileExports.named || []
+      fileExports.named.push(match[2])
+    } else {
+      const key = match[1] === 'type' ? 'type' : 'named'
+      fileExports[key] = fileExports[key] || []
+      fileExports[key].push(match[2])
     }
+  }
+
+  while (match = exportRegex.fullRexport.exec(fileText)) {
+    fileExports.all = fileExports.all || []
+    fileExports.all.push(match[1])
+  }
+
+  // match[1] = export names
+  // match[2] = path
+  while (match = exportRegex.selectiveRexport.exec(fileText)) {
+    if (!fileExports.reexports) fileExports.reexports = {}
+    const subPath = match[2]
+    if (!fileExports.reexports[subPath]) fileExports.reexports[subPath] = []
+    const reexports = fileExports.reexports[subPath]
+
+    match[1].split(',').forEach(exp => {
+      const words = exp.trim().split(/ +/)
+      const isType = words[0] === 'type'
+      const key = isType ? 'type' : 'named'
+      reexports.push(words[isType ? 1 : 0])
+      fileExports[key] = fileExports[key] || []
+      fileExports[key].push(_.last(words))
+    })
   }
 
   if (!_.isEmpty(fileExports)) {
@@ -73,27 +69,11 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     data[filePathKey] = fileExports
   }
 
+  exportRegex.standard.lastIndex = 0
+  exportRegex.fullRexport.lastIndex = 0
+  exportRegex.selectiveRexport.lastIndex = 0
+
   return data
-}
-
-function processReexportNode(plugin, fileExports, exportArray = [], line) {
-  // TODO: replace with regex. this breaks if reexporting is multiline, eg
-  // export { blah, blah, blah,
-  //   blah, blah } from './mypath'
-  const end = line.indexOf('}')
-  if (end < 0) return
-  
-  if (!fileExports.reexports) fileExports.reexports = {}
-  const subfilepath = parseLineImportPath(plugin, line)
-  if (!fileExports.reexports[subfilepath]) fileExports.reexports[subfilepath] = []
-  const reexports = fileExports.reexports[subfilepath]
-
-  const exportText = line.slice(line.indexOf('{') + 1, end)
-  exportText.split(',').forEach(exp => {
-    const words = exp.trim().split(/ +/)
-    reexports.push(words[0])
-    exportArray.push(_.last(words))
-  })
 }
 
 /**
