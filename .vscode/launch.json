@@ -26,6 +26,16 @@
             ]
         },
         {
+            "name": "JS - Gatsby",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceFolder}/../test-workspaces/gatsby",
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ]
+        },
+        {
             "name": "Extension Tests",
             "type": "extensionHost",
             "request": "launch",

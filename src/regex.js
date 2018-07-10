@@ -22,10 +22,12 @@ function parseImports(text) {
       default: match[1],
     }
     if (match[2]) {
-      const namedAndTypes = match[2]
-        .replace(/{}]/g, '')
-        .split(',')
-        .map(i => i.trim())
+      const namedAndTypes = _.compact(
+        match[2]
+          .replace(/{}]/g, '')
+          .split(',')
+          .map(i => i.trim())
+      )
 
       const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
       if (groups[0].length)
