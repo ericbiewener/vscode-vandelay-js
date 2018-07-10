@@ -24,7 +24,7 @@ function insertImport(plugin, importSelection) {
     isExtraImport
   )
   const fileText = editor.document.getText()
-  const imports = parseImports(fileText)
+  const imports = parseImports(plugin, fileText)
 
   const importPosition = getImportPosition(
     plugin,

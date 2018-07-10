@@ -5,7 +5,7 @@ function getNewLine(plugin, importPath, imports) {
   imports.types.sort()
   const nonDefaultImports = imports.named.concat(imports.types.map(t => 'type ' + t))
 
-  let newLineStart = 'import'
+  let newLineStart = plugin.useES5 ? 'import' : 'const'
   if (imports.default) newLineStart += ' ' + imports.default
 
   let newLineMiddle = ''
@@ -20,7 +20,7 @@ function getNewLine(plugin, importPath, imports) {
   }
 
   const quoteChar = quoteType === 'single' ? '\'' : '"'
-  newLineEnd += ' from ' + quoteChar + importPath + quoteChar
+  newLineEnd += ` ${plugin.useES5 ? '= require(' : 'from'} ${quoteChar}${importPath}${quoteChar}${plugin.useES5 ? ')' : ''}`
   if (useSemicolons) newLineEnd += ';'
 
   // Split up line if necessary

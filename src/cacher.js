@@ -8,7 +8,7 @@ const {parseImports, exportRegex} = require('./regex')
 function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
   const fileExports = {}
   const fileText = fs.readFileSync(filepath, 'utf8')
-  const imports = parseImports(fileText)
+  const imports = parseImports(plugin, fileText)
 
   for (const importData of imports) {
     if (!isPathNodeModule(plugin, importData.path)) continue
@@ -20,8 +20,11 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
   }
 
   let match
-  while (match = exportRegex.standard.exec(fileText)) {
-    if (match[1] === 'default') {
+
+  const mainRegex = plugin.useES5 ? exportRegex.moduleExports : exportRegex.standard
+  
+  while (match = mainRegex.exec(fileText)) {
+    if (match[1] === 'default' || (plugin.useES5 && match[1])) {
       if (filepath.endsWith('index.js')) {
         fileExports.default = basename(path.dirname(filepath))
       } else {
@@ -31,37 +34,39 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
         }
         if (!fileExports.default) fileExports.default = basename(filepath)
       }
-    } else if (!match[2]) { // export myVar;
+    } else if ((!plugin.useES5 && !match[2]) || (plugin.useES5 && match[2])) { // export myVar;
       fileExports.named = fileExports.named || []
-      fileExports.named.push(match[2])
-    } else {
-      const key = match[1] === 'type' ? 'type' : 'named'
+      fileExports.named.push(match[plugin.useES5 ? 2 : 1])
+    } else if (match[2]) {
+      const key = match[1] === 'type' ? 'types' : 'named'
       fileExports[key] = fileExports[key] || []
       fileExports[key].push(match[2])
     }
   }
 
-  while (match = exportRegex.fullRexport.exec(fileText)) {
-    fileExports.all = fileExports.all || []
-    fileExports.all.push(match[1])
-  }
+  if (!plugin.useES5) {
+    while (match = exportRegex.fullRexport.exec(fileText)) {
+      fileExports.all = fileExports.all || []
+      fileExports.all.push(match[1])
+    }
 
-  // match[1] = export names
-  // match[2] = path
-  while (match = exportRegex.selectiveRexport.exec(fileText)) {
-    if (!fileExports.reexports) fileExports.reexports = {}
-    const subPath = match[2]
-    if (!fileExports.reexports[subPath]) fileExports.reexports[subPath] = []
-    const reexports = fileExports.reexports[subPath]
+    // match[1] = export names
+    // match[2] = path
+    while (match = exportRegex.selectiveRexport.exec(fileText)) {
+      if (!fileExports.reexports) fileExports.reexports = {}
+      const subPath = match[2]
+      if (!fileExports.reexports[subPath]) fileExports.reexports[subPath] = []
+      const reexports = fileExports.reexports[subPath]
 
-    match[1].split(',').forEach(exp => {
-      const words = exp.trim().split(/ +/)
-      const isType = words[0] === 'type'
-      const key = isType ? 'type' : 'named'
-      reexports.push(words[isType ? 1 : 0])
-      fileExports[key] = fileExports[key] || []
-      fileExports[key].push(_.last(words))
-    })
+      match[1].split(',').forEach(exp => {
+        const words = exp.trim().split(/ +/)
+        const isType = words[0] === 'type'
+        const key = isType ? 'types' : 'named'
+        reexports.push(words[isType ? 1 : 0])
+        fileExports[key] = fileExports[key] || []
+        fileExports[key].push(_.last(words))
+      })
+    }
   }
 
   if (!_.isEmpty(fileExports)) {

@@ -6,7 +6,7 @@
 	"version": "0.2.0",
     "configurations": [
         {
-            "name": "JS - Single Root Workspace Extension",
+            "name": "Single Root Workspace Extension",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -16,7 +16,7 @@
             ]
         },
         {
-            "name": "JS - Multi Root Workspace Extension",
+            "name": "Multi Root Workspace Extension",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -26,12 +26,22 @@
             ]
         },
         {
-            "name": "JS - Gatsby",
+            "name": "Gatsby",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/../test-workspaces/gatsby",
+                "${workspaceFolder}/../test-workspaces/js-gatsby",
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ]
+        },
+        {
+            "name": "Require",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceFolder}/../test-workspaces/js-require",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ]
         },
