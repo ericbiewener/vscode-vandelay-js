@@ -9,12 +9,15 @@ const _ = require('lodash')
  *    2. named/type imports
  *    3. path
  */
+// TODO: check for whether any `+` or `*` should be made non-greedy by adding whatever character they're looking for later on the line (e.g. by having an inline comment)
 const importRegex = /^import +?(?:(\w+)[, ])? *(?:{([^]*?)} +)?from +["|'](.*)["|'].*/gm
+const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\(['|"](.*?)['|"].*/gm
 
-function parseImports(text) {
+function parseImports(plugin, text) {
+  const regex = plugin.useRequire ? requireRegex : importRegex
   const imports = []
   let match
-  while ((match = importRegex.exec(text))) {
+  while ((match = regex.exec(text))) {
     const results = {
       path: match[3],
       start: match.index,
@@ -29,15 +32,19 @@ function parseImports(text) {
           .map(i => i.trim())
       )
 
-      const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
-      if (groups[0].length)
-        results.types = groups[0].map(i => i.slice(5).trim())
-      if (groups[1].length) results.named = groups[1]
+      if (plugin.useRequire) {
+        const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
+        if (groups[0].length)
+          results.types = groups[0].map(i => i.slice(5).trim())
+        if (groups[1].length) results.named = groups[1]
+      } else {
+        results.named = namedAndTypes
+      }
     }
     imports.push(results)
   }
 
-  importRegex.lastIndex = 0
+  regex.lastIndex = 0
   return imports
 }
 
