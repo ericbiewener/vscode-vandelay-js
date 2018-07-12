@@ -30,12 +30,12 @@ function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
     }
   }
 
-  const importPos = plugin.importOrderMap[importPath]
+  const importPos = plugin.utils.getImportOrderPosition(importPath)
   const importIsAbsolute = !importPath.startsWith('.')
 
   for (const importData of imports) {
     // plugin.importOrder check
-    const lineImportPos = plugin.importOrderMap[importData.path]
+    const lineImportPos = plugin.utils.getImportOrderPosition(importData.path)
     if (importPos != null && (!lineImportPos || importPos < lineImportPos)) {
       return { match: importData, indexModifier: -1, }
     } else if (lineImportPos != null) {
