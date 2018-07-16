@@ -35,7 +35,7 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
       fileExports.named = fileExports.named || []
       fileExports.named.push(match[2])
     } else {
-      const key = match[1] === 'type' ? 'type' : 'named'
+      const key = match[1] === 'type' ? 'types' : 'named'
       fileExports[key] = fileExports[key] || []
       fileExports[key].push(match[2])
     }
