@@ -57,7 +57,7 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     match[1].split(',').forEach(exp => {
       const words = exp.trim().split(/ +/)
       const isType = words[0] === 'type'
-      const key = isType ? 'type' : 'named'
+      const key = isType ? 'types' : 'named'
       reexports.push(words[isType ? 1 : 0])
       fileExports[key] = fileExports[key] || []
       fileExports[key].push(_.last(words))
