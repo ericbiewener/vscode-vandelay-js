@@ -12,7 +12,7 @@ function buildImportItems(plugin, exportData) {
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
 
-  const sortedKeys = plugin.sharedUtils.getExportDataKeysByCachedDate(exportData)
+  const sortedKeys = plugin.utils.getExportDataKeysByCachedDate(exportData)
   for (const importPath of sortedKeys) {
     let absImportPath = path.join(projectRoot, importPath)
     if (absImportPath === activeFilepath) continue

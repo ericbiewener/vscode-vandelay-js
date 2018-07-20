@@ -32,14 +32,9 @@ function parseImports(plugin, text) {
           .map(i => i.trim())
       )
 
-      if (plugin.useRequire) {
-        const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
-        if (groups[0].length)
-          results.types = groups[0].map(i => i.slice(5).trim())
-        if (groups[1].length) results.named = groups[1]
-      } else {
-        results.named = namedAndTypes
-      }
+      const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
+      if (groups[0].length) results.types = groups[0].map(i => i.slice(5).trim())
+      if (groups[1].length) results.named = groups[1]
     }
     imports.push(results)
   }
