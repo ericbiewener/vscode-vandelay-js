@@ -41,7 +41,7 @@ function parseImports(text) {
   return imports
 }
 
-const commentRegex = /^(?:[ \t]*\/\/|[ \t]*\/\*[^]*?\*\/)/gm
+const commentRegex = /^(?:[ \t]*\/\/.*|[ \t]*\/\*[^]*?\*\/)/gm
 
 const exportRegex = {
   standard: /^export +(\w+)(?: +(\w+))?/gm,
