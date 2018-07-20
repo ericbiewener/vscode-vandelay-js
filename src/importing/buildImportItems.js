@@ -18,7 +18,7 @@ function buildImportItems(plugin, exportData) {
     if (!createdA && !createdB) return a < b ? -1 : 1 // alphabetical
     if (createdA && !createdB) return -1
     if (createdB && !createdA) return 1
-    return createdA < createdB ? -1 : 1
+    return createdA < createdB ? 1 : -1
   })
 
   for (const importPath of sortedKeys) {
