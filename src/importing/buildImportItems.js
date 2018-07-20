@@ -12,15 +12,7 @@ function buildImportItems(plugin, exportData) {
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
 
-  const sortedKeys = Object.keys(exportData).sort((a, b) => {
-    const createdA = exportData[a].cached
-    const createdB = exportData[b].cached
-    if (!createdA && !createdB) return a < b ? -1 : 1 // alphabetical
-    if (createdA && !createdB) return -1
-    if (createdB && !createdA) return 1
-    return createdA < createdB ? 1 : -1
-  })
-
+  const sortedKeys = plugin.sharedUtils.getExportDataKeysByCachedDate(exportData)
   for (const importPath of sortedKeys) {
     let absImportPath = path.join(projectRoot, importPath)
     if (absImportPath === activeFilepath) continue
