@@ -66,7 +66,11 @@ function getNewLineImports(importPosition, exportName, exportType) {
 
   const imports = indexModifier
     ? { named: [], types: [] }
-    : { named: match.named || [], types: match.types || [], default: match.default }
+    : {
+        named: match.named || [],
+        types: match.types || [],
+        default: match.default,
+      }
 
   if (exportType === ExportType.default) {
     if (imports.default) return

@@ -35,6 +35,9 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-config-ericbiewener": "^1.0.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "prettier-eslint-cli": "^4.7.1",
     "vscode": "^1.1.6"
   },
   "dependencies": {
@@ -44,7 +47,7 @@
   "eslintIgnore": [
     "**/__mocks__"
   ],
-  "pre-commit": {
+  "lint-staged": {
     "**/*.js": [
       "prettier-eslint --prettier-last --write",
       "git add"
@@ -52,7 +55,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pre-commit"
+      "pre-commit": "lint-staged"
     }
   }
 }

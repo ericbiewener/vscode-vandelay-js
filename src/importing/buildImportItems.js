@@ -1,4 +1,4 @@
-const {window} = require('vscode')
+const { window } = require('vscode')
 const path = require('path')
 
 const ExportType = {
@@ -8,7 +8,7 @@ const ExportType = {
 }
 
 function buildImportItems(plugin, exportData) {
-  const {projectRoot, shouldIncludeImport} = plugin
+  const { projectRoot, shouldIncludeImport } = plugin
   const activeFilepath = window.activeTextEditor.document.fileName
   const items = []
 
@@ -24,19 +24,25 @@ function buildImportItems(plugin, exportData) {
   for (const importPath of sortedKeys) {
     let absImportPath = path.join(projectRoot, importPath)
     if (absImportPath === activeFilepath) continue
-    if (shouldIncludeImport && !shouldIncludeImport(absImportPath, activeFilepath)) {
+    if (
+      shouldIncludeImport &&
+      !shouldIncludeImport(absImportPath, activeFilepath)
+    ) {
       continue
     }
-    
+
     const data = exportData[importPath]
     let defaultExport
     let namedExports
     let typeExports
 
     if (data.reexported) {
-      if (data.default && !data.reexported.includes('default')) defaultExport = data.default
-      if (data.named) namedExports = data.named.filter(exp => !data.reexported.includes(exp))
-      if (data.types) typeExports = data.types.filter(exp => !data.reexported.includes(exp))
+      if (data.default && !data.reexported.includes('default'))
+        defaultExport = data.default
+      if (data.named)
+        namedExports = data.named.filter(exp => !data.reexported.includes(exp))
+      if (data.types)
+        typeExports = data.types.filter(exp => !data.reexported.includes(exp))
     } else {
       defaultExport = data.default
       namedExports = data.named
@@ -46,7 +52,10 @@ function buildImportItems(plugin, exportData) {
     const ext = path.extname(importPath)
     const importPathNoExt = ext ? importPath.slice(0, -ext.length) : importPath
 
-    if (absImportPath.endsWith('index.js') || absImportPath.endsWith('index.jsx')) {
+    if (
+      absImportPath.endsWith('index.js') ||
+      absImportPath.endsWith('index.jsx')
+    ) {
       absImportPath = path.dirname(absImportPath)
     }
 
@@ -88,10 +97,10 @@ function buildImportItems(plugin, exportData) {
   return items
 }
 
-
-
 function buildTypeImportItems(plugin, exportData) {
-  return buildImportItems(plugin, exportData).filter(e => e.exportType === ExportType.type)
+  return buildImportItems(plugin, exportData).filter(
+    e => e.exportType === ExportType.type
+  )
 }
 
 module.exports = {

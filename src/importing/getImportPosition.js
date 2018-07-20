@@ -1,6 +1,6 @@
 const _ = require('lodash')
-const { commentRegex, } = require('../regex')
-const { isPathNodeModule, } = require('../utils')
+const { commentRegex } = require('../regex')
+const { isPathNodeModule } = require('../utils')
 
 /**
  * Determine which line number should get the import. This could be merged into that line
@@ -37,7 +37,7 @@ function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
     // plugin.importOrder check
     const lineImportPos = plugin.utils.getImportOrderPosition(importData.path)
     if (importPos != null && (!lineImportPos || importPos < lineImportPos)) {
-      return { match: importData, indexModifier: -1, }
+      return { match: importData, indexModifier: -1 }
     } else if (lineImportPos != null) {
       continue
     }
@@ -46,7 +46,7 @@ function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
     const lineIsNodeModule = isPathNodeModule(plugin, importData.path)
 
     if (isExtraImport && (!lineIsNodeModule || importPath < importData.path)) {
-      return { match: importData, indexModifier: -1, }
+      return { match: importData, indexModifier: -1 }
     } else if (lineIsNodeModule) {
       continue
     }
@@ -54,14 +54,14 @@ function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
     // Absolute path check
     const lineIsAbsolute = !importData.path.startsWith('.')
     if (importIsAbsolute && (!lineIsAbsolute || importPath < importData.path)) {
-      return { match: importData, indexModifier: -1, }
+      return { match: importData, indexModifier: -1 }
     } else if (lineIsAbsolute) {
       continue
     }
 
     // Alphabetical
     if (importPath < importData.path)
-      return { match: importData, indexModifier: -1, }
+      return { match: importData, indexModifier: -1 }
   }
 
   // Since we didn't find a line to sort the new import before, it will go after the last import

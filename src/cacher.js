@@ -44,8 +44,9 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
     } else if (plugin.useRequire && match[2]) {
       fileExports.named = fileExports.named || []
       fileExports.named.push(
-        ..._.compact(match[2].replace(/\s/g, '').split(','))
-          .map(exp => exp.split(':')[0])
+        ..._.compact(match[2].replace(/\s/g, '').split(',')).map(
+          exp => exp.split(':')[0]
+        )
       )
     } else if (match[2]) {
       const key = match[1] === 'type' ? 'types' : 'named'

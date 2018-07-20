@@ -1,9 +1,18 @@
 function getNewLine(plugin, importPath, imports) {
-  const {padCurlyBraces, quoteType, useSemicolons, maxImportLineLength, multilineImportStyle, commaDangle} = plugin
+  const {
+    padCurlyBraces,
+    quoteType,
+    useSemicolons,
+    maxImportLineLength,
+    multilineImportStyle,
+    commaDangle,
+  } = plugin
 
   imports.named.sort()
   imports.types.sort()
-  const nonDefaultImports = imports.named.concat(imports.types.map(t => 'type ' + t))
+  const nonDefaultImports = imports.named.concat(
+    imports.types.map(t => 'type ' + t)
+  )
 
   let newLineStart = plugin.useRequire ? 'const' : 'import'
   if (imports.default) newLineStart += ' ' + imports.default
@@ -19,14 +28,17 @@ function getNewLine(plugin, importPath, imports) {
     newLineEnd += '}'
   }
 
-  const quoteChar = quoteType === 'single' ? '\'' : '"'
-  newLineEnd += ` ${plugin.useRequire ? '= require(' : 'from'} ${quoteChar}${importPath}${quoteChar}${plugin.useRequire ? ')' : ''}`
+  const quoteChar = quoteType === 'single' ? "'" : '"'
+  newLineEnd += ` ${
+    plugin.useRequire ? '= require(' : 'from'
+  } ${quoteChar}${importPath}${quoteChar}${plugin.useRequire ? ')' : ''}`
   if (useSemicolons) newLineEnd += ';'
 
   // Split up line if necessary
 
   const tabChar = plugin.utils.getTabChar()
-  const newLineLength = newLineStart.length + newLineMiddle.length + newLineEnd.length
+  const newLineLength =
+    newLineStart.length + newLineMiddle.length + newLineEnd.length
 
   // If line is short enough OR there are no named/type imports, no need to split into multiline
   if (newLineLength <= maxImportLineLength || !nonDefaultImports.length) {
@@ -35,13 +47,14 @@ function getNewLine(plugin, importPath, imports) {
 
   if (multilineImportStyle === 'single') {
     // trim start & end to remove possible curly brace padding
-    const final = newLineStart.trim()
-      + '\n'
-      + tabChar
-      + nonDefaultImports.join(',\n' + tabChar)
-      + (commaDangle ? ',' : '')
-      + '\n'
-      + newLineEnd.trim()
+    const final =
+      newLineStart.trim() +
+      '\n' +
+      tabChar +
+      nonDefaultImports.join(',\n' + tabChar) +
+      (commaDangle ? ',' : '') +
+      '\n' +
+      newLineEnd.trim()
 
     return final
   }
@@ -59,8 +72,8 @@ function getNewLine(plugin, importPath, imports) {
     // If it's the last import, we need to make sure that the line end "from ..." text will also fit on the line before
     // appending the new import text.
     if (
-      (!isLast && newLength <= maxImportLineLength)
-      || (isLast && newLength + newLineEnd <= maxImportLineLength)
+      (!isLast && newLength <= maxImportLineLength) ||
+      (isLast && newLength + newLineEnd <= maxImportLineLength)
     ) {
       line += newText
     } else {
