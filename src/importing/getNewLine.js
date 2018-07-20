@@ -28,8 +28,7 @@ function getNewLine(plugin, importPath, imports) {
     newLineEnd += '}'
   }
 
-  
-  const quoteChar = quoteType === 'single' ? "'" : '"'
+  const quoteChar = quoteType === 'single' ? '\'' : '"'
   newLineEnd += ` ${
     plugin.useRequire ? '= require(' : 'from'
   } ${quoteChar}${importPath}${quoteChar}${plugin.useRequire ? ')' : ''}`
