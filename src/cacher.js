@@ -1,11 +1,10 @@
 const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
-const {basename, isPathNodeModule} = require('./utils')
-const {parseImports, exportRegex} = require('./regex')
+const { basename, isPathNodeModule } = require('./utils')
+const { parseImports, exportRegex } = require('./regex')
 
-
-function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
+function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
   const fileExports = {}
   const fileText = fs.readFileSync(filepath, 'utf8')
   const imports = parseImports(plugin, fileText)
@@ -15,16 +14,20 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     const existing = data._extraImports[importData.path] || {}
     data._extraImports[importData.path] = existing
     if (importData.default) existing.default = importData.default
-    if (importData.named) existing.named = _.union(existing.named, importData.named)
-    if (importData.types) existing.types = _.union(existing.types, importData.types)
+    if (importData.named)
+      existing.named = _.union(existing.named, importData.named)
+    if (importData.types)
+      existing.types = _.union(existing.types, importData.types)
   }
 
   let match
 
-  const mainRegex = plugin.useES5 ? exportRegex.moduleExports : exportRegex.standard
-  
-  while (match = mainRegex.exec(fileText)) {
-    if (match[1] === 'default' || (plugin.useES5 && match[1])) {
+  const mainRegex = plugin.useRequire
+    ? exportRegex.moduleExports
+    : exportRegex.standard
+
+  while ((match = mainRegex.exec(fileText))) {
+    if (match[1] === 'default' || (plugin.useRequire && match[1])) {
       if (filepath.endsWith('index.js')) {
         fileExports.default = basename(path.dirname(filepath))
       } else {
@@ -34,9 +37,16 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
         }
         if (!fileExports.default) fileExports.default = basename(filepath)
       }
-    } else if ((!plugin.useES5 && !match[2]) || (plugin.useES5 && match[2])) { // export myVar;
+    } else if (!plugin.useRequire && !match[2]) {
+      // export myVar;
       fileExports.named = fileExports.named || []
-      fileExports.named.push(match[plugin.useES5 ? 2 : 1])
+      fileExports.named.push(match[2])
+    } else if (plugin.useRequire && match[2]) {
+      fileExports.named = fileExports.named || []
+      fileExports.named.push(
+        ..._.compact(match[2].replace(/\s/g, '').split(','))
+          .map(exp => exp.split(':')[0])
+      )
     } else if (match[2]) {
       const key = match[1] === 'type' ? 'types' : 'named'
       fileExports[key] = fileExports[key] || []
@@ -44,15 +54,15 @@ function cacheFile(plugin, filepath, data = {_extraImports: {}}) {
     }
   }
 
-  if (!plugin.useES5) {
-    while (match = exportRegex.fullRexport.exec(fileText)) {
+  if (!plugin.useRequire) {
+    while ((match = exportRegex.fullRexport.exec(fileText))) {
       fileExports.all = fileExports.all || []
       fileExports.all.push(match[1])
     }
 
     // match[1] = export names
     // match[2] = path
-    while (match = exportRegex.selectiveRexport.exec(fileText)) {
+    while ((match = exportRegex.selectiveRexport.exec(fileText))) {
       if (!fileExports.reexports) fileExports.reexports = {}
       const subPath = match[2]
       if (!fileExports.reexports[subPath]) fileExports.reexports[subPath] = []

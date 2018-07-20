@@ -14,7 +14,7 @@ const importRegex = /^import +?(?:(\w+)[, ])? *(?:{([^]*?)} +)?from +["|'](.*)["
 const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\(['|"](.*?)['|"].*/gm
 
 function parseImports(plugin, text) {
-  const regex = plugin.useES5 ? requireRegex : importRegex
+  const regex = plugin.useRequire ? requireRegex : importRegex
   const imports = []
   let match
   while ((match = regex.exec(text))) {
@@ -32,7 +32,7 @@ function parseImports(plugin, text) {
           .map(i => i.trim())
       )
 
-      if (plugin.useES5) {
+      if (plugin.useRequire) {
         const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
         if (groups[0].length)
           results.types = groups[0].map(i => i.slice(5).trim())
@@ -48,7 +48,7 @@ function parseImports(plugin, text) {
   return imports
 }
 
-const commentRegex = /^(?:[ \t]*\/\/|[ \t]*\/\*[^]*?\*\/)/gm
+const commentRegex = /^(?:[ \t]*\/\/.*|[ \t]*\/\*[^]*?\*\/)/gm
 
 const exportRegex = {
   standard: /^export +(\w+)(?: +(\w+))?/gm,

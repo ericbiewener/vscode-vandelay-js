@@ -1,46 +1,58 @@
 {
-    "name": "vandelay-js",
-    "displayName": "Vandelay JS",
-    "description": "Python plugin for the VS Code Vandelay extension",
-    "version": "0.0.1",
-    "publisher": "edb",
-    "engines": {
-        "vscode": "^1.21.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "contributes": {
-        "commands": [
-            {
-                "title": "Import type...",
-                "command": "vandelayJs.selectTypeImport"
-            },
-            {
-                "title": "Import type for active word...",
-                "command": "vandelayJs.selectTypeImportForActiveWord"
-            }
-        ]
-    },
-    "main": "./src/index.js",
-    "scripts": {
-        "build": "babel ./src --out-dir=./build --source-maps",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "jest"
-    },
-    "devDependencies": {
-        "eslint": "^4.11.0",
-        "eslint-config-ericbiewener": "^1.0.1",
-        "vscode": "^1.1.6"
-    },
-    "dependencies": {
-        "fs-extra": "^5.0.0",
-        "lodash": "^4.17.5"
-    },
-    "eslintIgnore": [
-        "**/__mocks__"
+  "name": "vandelay-js",
+  "displayName": "Vandelay JS",
+  "description": "Python plugin for the VS Code Vandelay extension",
+  "version": "0.0.1",
+  "publisher": "edb",
+  "engines": {
+    "vscode": "^1.21.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "title": "Import type...",
+        "command": "vandelayJs.selectTypeImport"
+      },
+      {
+        "title": "Import type for active word...",
+        "command": "vandelayJs.selectTypeImportForActiveWord"
+      }
     ]
+  },
+  "main": "./src/index.js",
+  "scripts": {
+    "build": "babel ./src --out-dir=./build --source-maps",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "prettier": "prettier-eslint --prettier-last --write \"**/*.js\"",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-config-ericbiewener": "^1.0.1",
+    "vscode": "^1.1.6"
+  },
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "lodash": "^4.17.5"
+  },
+  "eslintIgnore": [
+    "**/__mocks__"
+  ],
+  "pre-commit": {
+    "**/*.js": [
+      "prettier-eslint --prettier-last --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pre-commit"
+    }
+  }
 }
