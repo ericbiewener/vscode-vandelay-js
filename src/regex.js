@@ -14,7 +14,7 @@ const importRegex = /^import +?(?:(\w+)[, ])? *(?:{([^]*?)} +)?from +["|'](.*)["
 const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\(['|"](.*?)['|"].*/gm
 
 function parseImports(plugin, text) {
-  const regex = plugin.useRequire ? requireRegex : importRegex
+  const regex = plugin.useES5 ? requireRegex : importRegex
   const imports = []
   let match
   while ((match = regex.exec(text))) {
@@ -33,7 +33,8 @@ function parseImports(plugin, text) {
       )
 
       const groups = _.partition(namedAndTypes, i => i.startsWith('type '))
-      if (groups[0].length) results.types = groups[0].map(i => i.slice(5).trim())
+      if (groups[0].length)
+        results.types = groups[0].map(i => i.slice(5).trim())
       if (groups[1].length) results.named = groups[1]
     }
     imports.push(results)

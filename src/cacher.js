@@ -22,12 +22,12 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
 
   let match
 
-  const mainRegex = plugin.useRequire
+  const mainRegex = plugin.useES5
     ? exportRegex.moduleExports
     : exportRegex.standard
 
   while ((match = mainRegex.exec(fileText))) {
-    if (match[1] === 'default' || (plugin.useRequire && match[1])) {
+    if (match[1] === 'default' || (plugin.useES5 && match[1])) {
       if (filepath.endsWith('index.js')) {
         fileExports.default = basename(path.dirname(filepath))
       } else {
@@ -37,11 +37,11 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
         }
         if (!fileExports.default) fileExports.default = basename(filepath)
       }
-    } else if (!plugin.useRequire && !match[2]) {
+    } else if (!plugin.useES5 && !match[2]) {
       // export myVar;
       fileExports.named = fileExports.named || []
-      fileExports.named.push(match[2])
-    } else if (plugin.useRequire && match[2]) {
+      fileExports.named.push(match[1])
+    } else if (plugin.useES5 && match[2]) {
       fileExports.named = fileExports.named || []
       fileExports.named.push(
         ..._.compact(match[2].replace(/\s/g, '').split(',')).map(
@@ -55,7 +55,7 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
     }
   }
 
-  if (!plugin.useRequire) {
+  if (!plugin.useES5) {
     while ((match = exportRegex.fullRexport.exec(fileText))) {
       fileExports.all = fileExports.all || []
       fileExports.all.push(match[1])

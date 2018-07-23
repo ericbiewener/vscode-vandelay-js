@@ -9,6 +9,8 @@ const {
 async function activate(context) {
   const vandelay = await extensions.getExtension('edb.vandelay').activate()
 
+  let api; // just used for testing
+
   vandelay.registerPlugin({
     language: 'js',
     cacheFile,
@@ -22,6 +24,7 @@ async function activate(context) {
     quoteType: 'single',
     finalizePlugin(plugin) {
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
+      api = plugin
     },
   })
 
@@ -35,5 +38,7 @@ async function activate(context) {
       selectImportForActiveWord(buildTypeImportItems)
     )
   )
+
+  return api;
 }
 exports.activate = activate

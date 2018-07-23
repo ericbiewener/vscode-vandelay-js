@@ -46,13 +46,28 @@
             ]
         },
         {
-            "name": "Extension Tests",
+            "name": "Tests - Single Root Workspace",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "${workspaceFolder}/test/single-root-workspace/project",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/test"
+                "--extensionTestsPath=${workspaceFolder}/test/single-root-workspace"
+            ]
+        },
+        {
+            "name": "Tests - UPDATE SNAPSHOTS - Single Root Workspace",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "SNAPSHOT_UPDATE": "true"
+            },
+            "args": [
+                "${workspaceFolder}/test/single-root-workspace/project",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test/single-root-workspace"
             ]
         }
     ]
