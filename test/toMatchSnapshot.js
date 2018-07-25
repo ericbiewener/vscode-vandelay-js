@@ -1,3 +1,4 @@
+const path = require('path')
 const jest = require('jest-snapshot')
 const expect = require('expect')
 
@@ -5,7 +6,13 @@ function toMatchSnapshot(received, { test }) {
   // Intilize the SnapshotState, it’s responsible for actually matching
   // actual snapshot with expected one and storing results to `__snapshots__` folder
   const snapshotState = new jest.SnapshotState(test.file, {
-    updateSnapshot: process.env.SNAPSHOT_UPDATE ? 'all' : 'new',
+    updateSnapshot: process.env.UPDATE_SNAPSHOT ? 'all' : 'new',
+    snapshotPath: path.join(
+      path.dirname(test.file),
+      process.env.TEST_PROJECT,
+      '__snapshots__',
+      path.basename(test.file) + '.snap'
+    ),
   })
 
   // Bind the `toMatchSnapshot` to the object with snapshotState and

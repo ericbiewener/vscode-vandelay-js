@@ -6,7 +6,7 @@
 	"version": "0.2.0",
     "configurations": [
         {
-            "name": "Single Root Workspace Extension",
+            "name": "Single Root",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -16,7 +16,7 @@
             ]
         },
         {
-            "name": "Multi Root Workspace Extension",
+            "name": "Multi Root",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -36,7 +36,7 @@
             ]
         },
         {
-            "name": "Require",
+            "name": "Single Root ES5",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -46,28 +46,61 @@
             ]
         },
         {
-            "name": "Tests - Single Root Workspace",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "${workspaceFolder}/test/single-root-workspace/project",
-                "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/test/single-root-workspace"
-            ]
-        },
-        {
-            "name": "Tests - UPDATE SNAPSHOTS - Single Root Workspace",
+            "name": "Tests - Single Root",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "env": {
-                "SNAPSHOT_UPDATE": "true"
+                "TEST_PROJECT": "single-root"
             },
             "args": [
-                "${workspaceFolder}/test/single-root-workspace/project",
+                "${workspaceFolder}/test/single-root",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/test/single-root-workspace"
+                "--extensionTestsPath=${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Tests - UPDATE SNAPSHOTS - Single Root",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "TEST_PROJECT": "single-root",
+                "UPDATE_SNAPSHOT": "true"
+            },
+            "args": [
+                "${workspaceFolder}/test/single-root",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Tests - Single Root ES5",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "TEST_PROJECT": "es5"
+            },
+            "args": [
+                "${workspaceFolder}/test/es5",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Tests - UPDATE SNAPSHOTS - Single Root ES5",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "TEST_PROJECT": "es5",
+                "UPDATE_SNAPSHOT": "true"
+            },
+            "args": [
+                "${workspaceFolder}/test/es5",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test"
             ]
         }
     ]
