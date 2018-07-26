@@ -1,6 +1,14 @@
-# Vandelay
+<p align="center">
+    <img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/logo.png" width="128" height="112" />
+</p>
 
-Official JavaScript plugin for the [Vandelay VS Code extension](https://github.com/ericbiewener/vscode-vandelay).
+<p align="center">
+  Official JavaScript plugin for the <a href="https://github.com/ericbiewener/vscode-vandelay">Vandelay VS Code extension</a>.
+  <br />
+  An official <a href="https://github.com/ericbiewener/vscode-vandelay-py">Python</a> plugin also exists.
+</p>
+
+
 
 ## Configuration
 INCLUDE INFO FOR VANDELAY-JS.JS CONFIG FILE
