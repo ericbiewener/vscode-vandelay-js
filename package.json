@@ -1,18 +1,44 @@
 {
   "name": "vandelay-js",
-  "displayName": "Vandelay JS",
-  "description": "Python plugin for the VS Code Vandelay extension",
-  "version": "0.0.1",
+  "displayName": "Vandelay JavaScript",
+  "description": "Automatically generate import statements for JavaScript.",
+  "version": "1.0.0-rc.1",
   "publisher": "edb",
+  "author": "Eric Biewener",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericbiewener/vscode-vandelay-js"
+  },
+  "homepage": "https://github.com/ericbiewener/vscode-vandelay-js/blob/master/README.md",
+  "bugs": {
+    "url": "https://github.com/ericbiewener/vscode-vandelay-js/issues"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "multi-root ready",
+    "import",
+    "export",
+    "javascript",
+    "generator"
+  ],
+  "icon": "artwork/logo.svg",
+  "galleryBanner": {
+    "color": "#01263F",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.21.0"
   },
-  "categories": [
-    "Other"
-  ],
   "activationEvents": [
     "*"
   ],
+  "main": "./src/index.js",
   "contributes": {
     "commands": [
       {
@@ -25,7 +51,6 @@
       }
     ]
   },
-  "main": "./src/index.js",
   "scripts": {
     "build": "babel ./src --out-dir=./build --source-maps",
     "postinstall": "node ./node_modules/vscode/bin/install",
