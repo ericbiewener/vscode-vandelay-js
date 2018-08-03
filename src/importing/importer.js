@@ -37,7 +37,7 @@ function insertImport(plugin, importSelection) {
   if (!lineImports) return
   const newLine = getNewLine(plugin, finalImportPath, lineImports)
 
-  plugin.utils.insertLine(newLine, importPosition)
+  return plugin.utils.insertLine(newLine, importPosition)
 }
 
 function getFinalImportPath(plugin, importPath, absImportPath, isExtraImport) {
@@ -67,10 +67,10 @@ function getNewLineImports(importPosition, exportName, exportType) {
   const imports = indexModifier
     ? { named: [], types: [] }
     : {
-        named: match.named || [],
-        types: match.types || [],
-        default: match.default,
-      }
+      named: match.named || [],
+      types: match.types || [],
+      default: match.default,
+    }
 
   if (exportType === ExportType.default) {
     if (imports.default) return

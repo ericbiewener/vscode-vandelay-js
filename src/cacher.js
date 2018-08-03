@@ -10,14 +10,24 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
   const imports = parseImports(plugin, fileText)
 
   for (const importData of imports) {
-    if (!isPathNodeModule(plugin, importData.path)) continue
-    const existing = data._extraImports[importData.path] || {}
-    data._extraImports[importData.path] = existing
-    if (importData.default) existing.default = importData.default
-    if (importData.named)
-      existing.named = _.union(existing.named, importData.named)
-    if (importData.types)
-      existing.types = _.union(existing.types, importData.types)
+    if (isPathNodeModule(plugin, importData.path)) {
+      const existing = data._extraImports[importData.path] || {}
+      data._extraImports[importData.path] = existing
+      if (importData.default) existing.default = importData.default
+      if (importData.named)
+        existing.named = _.union(existing.named, importData.named)
+      if (importData.types)
+        existing.types = _.union(existing.types, importData.types)
+    } else if (importData.default && importData.default.startsWith('* as')) {
+      // import * as Foo from...
+      const pathKey = plugin.utils.getFilepathKey(
+        path.resolve(path.dirname(filepath), `${importData.path}.js`) // Just guess at the file extension. Doesn't actually matter if it's right.
+      )
+      const existing = data[pathKey] || {}
+      if (existing.default) continue // don't overwrite default if it already exists
+      data[pathKey] = existing
+      existing.default = importData.default
+    }
   }
 
   let match
@@ -81,8 +91,12 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
   }
 
   if (!_.isEmpty(fileExports)) {
-    const filePathKey = plugin.utils.getFilepathKey(filepath)
-    data[filePathKey] = fileExports
+    const pathKey = plugin.utils.getFilepathKey(filepath)
+    const existing = data[pathKey]
+    // An existing default could be there from an earlier processed "import * as Foo from.."
+    if (existing && existing.default && !fileExports.default)
+      fileExports.default = existing.default
+    data[pathKey] = fileExports
   }
 
   exportRegex.standard.lastIndex = 0
@@ -108,7 +122,10 @@ function processCachedData(data) {
         } else {
           fileData.named = subfileExports.named
         }
-        subfileExports.reexported = subfileExports.named
+        subfileExports.reexported = {
+          reexports: subfileExports.named,
+          reexportPath: mainFilepath,
+        }
       })
 
       delete fileData.all
@@ -118,8 +135,10 @@ function processCachedData(data) {
       _.each(fileData.reexports, (exportNames, subfilePath) => {
         const subfileExports = getSubfileData(mainFilepath, subfilePath, data)
         if (subfileExports) {
-          if (!subfileExports.reexported) subfileExports.reexported = []
-          subfileExports.reexported.push(...exportNames)
+          if (!subfileExports.reexported) {
+            subfileExports.reexported = { reexports: [], reexportPath: mainFilepath }
+          }
+          subfileExports.reexported.reexports.push(...exportNames)
         }
       })
 

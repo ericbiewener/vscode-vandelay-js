@@ -2,49 +2,60 @@ const path = require('path')
 const jest = require('jest-snapshot')
 const expect = require('expect')
 
-function toMatchSnapshot(received, { test }) {
-  // Intilize the SnapshotState, it’s responsible for actually matching
-  // actual snapshot with expected one and storing results to `__snapshots__` folder
-  const snapshotState = new jest.SnapshotState(test.file, {
-    updateSnapshot: process.env.UPDATE_SNAPSHOT ? 'all' : 'new',
-    snapshotPath: path.join(
-      path.dirname(test.file),
-      process.env.TEST_PROJECT,
-      '__snapshots__',
-      path.basename(test.file) + '.snap'
-    ),
-  })
+let initialized
+let snapshotState
+let matcher
 
-  // Bind the `toMatchSnapshot` to the object with snapshotState and
-  // currentTest name, as `toMatchSnapshot` expects it as it’s `this`
-  // object members
-  const matcher = jest.toMatchSnapshot.bind({
+function toMatchSnapshot(received, { test }, currentTestName) {
+  if (!initialized) {
+    // Lazy initaialization: if imported into test/index.js, afterEach global will not be available yet
+    afterEach(() => {
+      if (!snapshotState) return
+      snapshotState.save()
+      snapshotState = null
+      matcher = null
+    })
+  }
+
+  if (!snapshotState) {
+    snapshotState = new jest.SnapshotState(test.file, {
+      updateSnapshot: process.env.UPDATE_SNAPSHOT ? 'all' : 'new',
+      snapshotPath: path.join(
+        path.dirname(test.file),
+        process.env.TEST_PROJECT,
+        '__snapshots__',
+        path.basename(test.file) + '.snap'
+      ),
+    })
+  }
+
+  // bind because toMatchSnapshot accesses snapshotState & currentTestName via `this`
+  matcher = jest.toMatchSnapshot.bind({
     snapshotState,
-    currentTestName: test.title,
+    currentTestName,
   })
 
-  // Execute the matcher
   const result = matcher(received)
 
-  // Store the state of snapshot, depending on updateSnapshot value
-  snapshotState.save()
-
-  // Return results outside
   return { result, snapshotState }
 }
 
 expect.extend({
-  toMatchSnapshot(received, context) {
-    const { result, snapshotState } = toMatchSnapshot(received, context)
-    // There will be no report if we are updating the snapshot
-    if (result.report) {
+  toMatchSnapshot(received, context, title) {
+    const { parent } = context.test
+    let currentTestName = parent && parent.title ? `${parent.title} | ` : ''
+    currentTestName += context.test.title
+    if (title) currentTestName += ` - ${title}`
+    const { result, snapshotState } = toMatchSnapshot(
+      received,
+      context,
+      currentTestName
+    )
+
+    if (!result.pass) {
       console.log(result.report())
     } else if (snapshotState.updated) {
-      console.log(
-        `Updated ${snapshotState.updated} snapshot${
-          snapshotState.updated > 1 ? 's' : ''
-        } in test ${context.test.title}`
-      )
+      console.log(`Updated ${currentTestName}`)
     }
     expect(result.pass).toBe(true)
     return result

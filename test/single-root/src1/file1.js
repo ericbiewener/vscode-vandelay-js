@@ -9,7 +9,10 @@ import defaultModule5, {
   type module5_t_1,
   module5_2 as module4_2_renamed,
   module5_3,
-} from 'module5'
+} from 'module5' // comment after import
+import * as FullModule from 'module6'
+import * as AllFile2Exports from './file2'
+import * as AllFile7Exports from './file7'
 
 export const src1_file1_1 = 'foo'
 export const src1_file1_2 = "bar";

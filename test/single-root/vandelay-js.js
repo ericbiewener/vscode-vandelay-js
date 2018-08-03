@@ -8,5 +8,8 @@ module.exports = {
   includePaths: [
     src1,
     src2,
+  ],
+  excludePatterns: [
+    path.join(src1, 'insert-import'),
   ]
 }

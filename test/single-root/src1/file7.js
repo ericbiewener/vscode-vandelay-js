@@ -18,7 +18,3 @@ export type src1_file7_t_1 = {
 }
 
 export type src1_file7_t_2 = src1_file7_t_1 & { baz: 9 }
-
-export default function() {
-
-}

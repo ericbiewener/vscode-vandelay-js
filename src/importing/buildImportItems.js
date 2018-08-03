@@ -28,13 +28,24 @@ function buildImportItems(plugin, exportData) {
     let namedExports
     let typeExports
 
-    if (data.reexported) {
-      if (data.default && !data.reexported.includes('default'))
+    if (
+      data.reexported &&
+      // If activeFilepath is in a subdirectory relative to the import, import directly from the
+      // import's original file location, not the reexport
+      !activeFilepath.startsWith(
+        path.join(
+          plugin.projectRoot,
+          path.dirname(data.reexported.reexportPath)
+        )
+      )
+    ) {
+      const { reexports } = data.reexported
+      if (data.default && !reexports.includes('default'))
         defaultExport = data.default
       if (data.named)
-        namedExports = data.named.filter(exp => !data.reexported.includes(exp))
+        namedExports = data.named.filter(exp => !reexports.includes(exp))
       if (data.types)
-        typeExports = data.types.filter(exp => !data.reexported.includes(exp))
+        typeExports = data.types.filter(exp => !reexports.includes(exp))
     } else {
       defaultExport = data.default
       namedExports = data.named

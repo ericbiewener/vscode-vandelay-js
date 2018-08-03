@@ -8,8 +8,10 @@ function getNewLine(plugin, importPath, imports) {
     commaDangle,
   } = plugin
 
-  imports.named.sort()
-  imports.types.sort()
+  const sensitivity = { sensitivity: 'base'}
+  imports.named.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
+  imports.types.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
+  
   const nonDefaultImports = imports.named.concat(
     imports.types.map(t => 'type ' + t)
   )
@@ -28,7 +30,7 @@ function getNewLine(plugin, importPath, imports) {
     newLineEnd += '}'
   }
 
-  const quoteChar = quoteType === 'single' ? '\'' : '"'
+  const quoteChar = quoteType === 'single' ? "'" : '"'
   newLineEnd += ` ${
     plugin.useES5 ? '= require(' : 'from'
   } ${quoteChar}${importPath}${quoteChar}${plugin.useES5 ? ')' : ''}`
@@ -77,7 +79,7 @@ function getNewLine(plugin, importPath, imports) {
     ) {
       line += newText
     } else {
-      const newLine = tabChar + newText
+      const newLine = tabChar + newText.trim()
       fullText += line + '\n' + newLine
       line = newLine
     }
