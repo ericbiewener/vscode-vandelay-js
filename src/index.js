@@ -9,7 +9,7 @@ const {
 async function activate(context) {
   const vandelay = await extensions.getExtension('edb.vandelay').activate()
 
-  let _test = {}
+  const _test = {}
 
   vandelay.registerPlugin({
     language: 'js',

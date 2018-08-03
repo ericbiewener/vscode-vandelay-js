@@ -136,7 +136,10 @@ function processCachedData(data) {
         const subfileExports = getSubfileData(mainFilepath, subfilePath, data)
         if (subfileExports) {
           if (!subfileExports.reexported) {
-            subfileExports.reexported = { reexports: [], reexportPath: mainFilepath }
+            subfileExports.reexported = {
+              reexports: [],
+              reexportPath: mainFilepath,
+            }
           }
           subfileExports.reexported.reexports.push(...exportNames)
         }

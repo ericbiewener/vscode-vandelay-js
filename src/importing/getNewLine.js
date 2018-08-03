@@ -8,10 +8,10 @@ function getNewLine(plugin, importPath, imports) {
     commaDangle,
   } = plugin
 
-  const sensitivity = { sensitivity: 'base'}
+  const sensitivity = { sensitivity: 'base' }
   imports.named.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
   imports.types.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
-  
+
   const nonDefaultImports = imports.named.concat(
     imports.types.map(t => 'type ' + t)
   )
