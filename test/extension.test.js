@@ -19,6 +19,7 @@ afterEach(async function() {
 const root = workspace.workspaceFolders[0].uri.path
 
 const getPlugin = () => extensions.getExtension('edb.vandelay-js').activate()
+const cacheProject = () => commands.executeCommand('vandelay.cacheProject')
 
 const getExportData = plugin =>
   JSON.parse(fs.readFileSync(plugin.cacheFilePath, 'utf-8'))
@@ -32,22 +33,34 @@ const openFile = (...fileParts) =>
     )
   )
 
-xit('cacheProject', async function() {
+let needsCache = true
+
+it('cacheProject', async function() {
   const plugin = await extensions.getExtension('edb.vandelay-js').activate()
-  await commands.executeCommand('vandelay.cacheProject')
+  await cacheProject()
+  needsCache = false
   const data = JSON.parse(fs.readFileSync(plugin.cacheFilePath, 'utf-8'))
   expect(data).toMatchSnapshot(this)
 })
 
 it('buildImportItems', async function() {
-  const [plugin] = await Promise.all([getPlugin(), openFile()])
+  const [plugin] = await Promise.all([
+    getPlugin(),
+    openFile(),
+    needsCache && cacheProject(),
+  ])
   const data = getExportData(plugin)
   data['src2/file1.js'].cached = Date.now()
-  const items = plugin._test.getImportItems(plugin, data, buildImportItems)
+  let items = plugin._test.getImportItems(plugin, data, buildImportItems)
+  expect(items).toMatchSnapshot(this)
+
+  // reexports should differ
+  await openFile(root, 'src2/file1.js')
+  items = plugin._test.getImportItems(plugin, data, buildImportItems)
   expect(items).toMatchSnapshot(this)
 })
 
-describe.skip('insertImort', () => {
+describe('insertImort', () => {
   const insertTest = async (context, filepath) => {
     context.timeout(1000 * 60)
     const open = () => openFile(filepath)
@@ -79,36 +92,36 @@ describe.skip('insertImort', () => {
     // }
   }
 
-  it.skip('insertImport - import order - comment-with-code-right-after.js', async function() {
+  xit('insertImport - import order - comment-with-code-right-after.js', async function() {
     await insertTest(
       this,
       path.join(root, 'src1/insert-import/comment-with-code-right-after.js')
     )
   })
 
-  it.skip('insertImport - import order - comment-with-linebreak-and-code.js', async function() {
+  xit('insertImport - import order - comment-with-linebreak-and-code.js', async function() {
     await insertTest(
       this,
       path.join(root, 'src1/insert-import/comment-with-linebreak-and-code.js')
     )
   })
 
-  it.skip('insertImport - import order - empty.js', async function() {
+  xit('insertImport - import order - empty.js', async function() {
     await insertTest(this, path.join(root, 'src1/insert-import/empty.js'))
   })
 
-  it.skip('insertImport - import order - has-code.js', async function() {
+  xit('insertImport - import order - has-code.js', async function() {
     await insertTest(this, path.join(root, 'src1/insert-import/has-code.js'))
   })
 
-  it.skip('insertImport - import order - multiline-comment.js', async function() {
+  xit('insertImport - import order - multiline-comment.js', async function() {
     await insertTest(
       this,
       path.join(root, 'src1/insert-import/multiline-comment.js')
     )
   })
 
-  it.skip('insertImport - import order - single-line-comment.js', async function() {
+  xit('insertImport - import order - single-line-comment.js', async function() {
     await insertTest(
       this,
       path.join(root, 'src1/insert-import/single-line-comment.js')

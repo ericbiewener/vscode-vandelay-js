@@ -47,7 +47,8 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
         }
         if (!fileExports.default) fileExports.default = basename(filepath)
       }
-    } else if (!plugin.useES5 && (!match[2] || match[2] === 'from')) {
+    } else if (!plugin.useES5 && !match[2] && !match[1].endsWith(',')) {
+      // endsWith(',') — it's actually a reexport
       // export myVar  |  export myVar from ...
       fileExports.named = fileExports.named || []
       fileExports.named.push(match[1])
@@ -58,7 +59,8 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
           exp => exp.split(':')[0]
         )
       )
-    } else if (match[2]) {
+    } else if (match[2] && match[2] !== 'from') {
+      // from — it's actually a reexport
       const key = match[1] === 'type' ? 'types' : 'named'
       fileExports[key] = fileExports[key] || []
       fileExports[key].push(match[2])
@@ -71,28 +73,41 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
       fileExports.all.push(match[1])
     }
 
-    // match[1] = export names, match[2] = path
+    // match[1] = default
+    // match[2] = export names
+    // match[3] = path
     while ((match = exportRegex.selectiveRexport.exec(fileText))) {
       if (!fileExports.reexports) fileExports.reexports = {}
-      const subPath = match[2]
+      const subPath = match[3]
       if (!fileExports.reexports[subPath]) fileExports.reexports[subPath] = []
       const reexports = fileExports.reexports[subPath]
 
-      match[1].split(',').forEach(exp => {
-        const words = exp.trim().split(/ +/)
+      if (match[1]) {
+        fileExports.named = fileExports.named || []
+        fileExports.named.push(match[1])
+        // 'default' string used so that `buildImportItems` can suppress the subfile's default
+        // export regardless of how the reexport location has named the variable (the value in
+        // match[1]). match[1] needed so that `buildImportItems` can suppress it when importing from an adjacent/subfile
+        reexports.push('default', match[1])
+      }
+
+      for (const exp of match[2].split(',')) {
+        const trimmed = exp.trim()
+        if (!trimmed) continue
+        const words = trimmed.split(/ +/)
         const isType = words[0] === 'type'
         const key = isType ? 'types' : 'named'
         reexports.push(words[isType ? 1 : 0])
         fileExports[key] = fileExports[key] || []
         fileExports[key].push(_.last(words))
-      })
+      }
     }
   }
 
   if (!_.isEmpty(fileExports)) {
     const pathKey = plugin.utils.getFilepathKey(filepath)
     const existing = data[pathKey]
-    // An existing default could be there from an earlier processed "import * as Foo from.."
+    // An existing default could be there from an earlier processed "import * as Foo from.." See https://goo.gl/JXXskw
     if (existing && existing.default && !fileExports.default)
       fileExports.default = existing.default
     data[pathKey] = fileExports
@@ -107,8 +122,13 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
 
 /**
  * 1. Process reexports to add the actual export names to the file keys in which they're reexported.
- * 2. Flag all these as having been rexported so that `buildImportItems` can decide when to suppress them.
+ * 2. Flag all these as having been rexported so that `buildImportItems` can decide when to suppress
+ *    them.
  * 3. Flag the reexports in their original file keys as having been reexported for the same reason.
+ *
+ * Note: If the reexport has been renamed (`export { x as y }`), it will not get filtered out when
+ * importing from an adjacent/subfile. While solveable, this is probably an edge case to be ignored
+ * (not to mention an undesireable API being created by the developer)
  */
 function processCachedData(data) {
   _.each(data, (fileData, mainFilepath) => {

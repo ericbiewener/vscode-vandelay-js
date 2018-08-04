@@ -1,15 +1,16 @@
 const _ = require('lodash')
 
 /**
- * Regex must end with `.*` after last capturing group to ensure that we capture the full line.
- * This is necessary so that the `end` property in the results is the correct character.
+ * Regex must end with `.*` after last capturing group to ensure that we capture the full line. This
+ * is necessary so that the `end` property in the results is the correct character.
  *
  * Matching groups:
  *    1. default import
  *    2. named/type imports
  *    3. path
  */
-// TODO: check for whether any `+` or `*` should be made non-greedy by adding whatever character they're looking for later on the line (e.g. by having an inline comment)
+// TODO: check for whether any `+` or `*` should be made non-greedy by adding whatever character
+// they're looking for later on the line (e.g. by having an inline comment)
 const importRegex = /^import +?(?:([^{]+?)[, ])? *(?:{([^]*?)} +)?from +["|'](.*)["|'].*/gm
 const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\(['|"](.*?)['|"].*/gm
 
@@ -47,9 +48,11 @@ function parseImports(plugin, text) {
 const commentRegex = /^(?:[ \t]*\/\/.*|[ \t]*\/\*[^]*?\*\/)/gm
 
 const exportRegex = {
-  standard: /^export +(\w+)(?: +(\w+))?/gm,
+  // `standard` also captures selective reexports that include a default reexport. It is the
+  // responsibility of `cacheFile` to handle this when processing these improts.
+  standard: /^export +(\w+,?)(?: +(\w+))?/gm,
   fullRexport: /^export +\*.+?['|"](.+)['|"]/gm,
-  selectiveRexport: /^export +{([^]+?)}.+?['|"](.+)['|"]/gm,
+  selectiveRexport: /^export +(\w*),* *{([^]+?)}.+?['|"](.+)['|"]/gm,
   moduleExports: /^module\.exports *= *(\w+)?(?:{([^]*?)})?.*/gm,
 }
 
