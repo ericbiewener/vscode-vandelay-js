@@ -86,8 +86,9 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
         fileExports.named = fileExports.named || []
         fileExports.named.push(match[1])
         // 'default' string used so that `buildImportItems` can suppress the subfile's default
-        // export regardless of how the reexport location has named the variable (the value in
-        // match[1]). match[1] needed so that `buildImportItems` can suppress it when importing from an adjacent/subfile
+        // export regardless of how the reexport location has named the variable
+        // (https://goo.gl/SeH6MV). `match[1]` needed so that `buildImportItems` can suppress it when
+        // importing from an adjacent/subfile (https://goo.gl/Ayk5Cg)
         reexports.push('default', match[1])
       }
 
