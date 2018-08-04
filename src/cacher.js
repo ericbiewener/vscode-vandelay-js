@@ -47,8 +47,8 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
         }
         if (!fileExports.default) fileExports.default = basename(filepath)
       }
-    } else if (!plugin.useES5 && !match[2]) {
-      // export myVar;
+    } else if (!plugin.useES5 && (!match[2] || match[2] === 'from')) {
+      // export myVar  |  export myVar from ...
       fileExports.named = fileExports.named || []
       fileExports.named.push(match[1])
     } else if (plugin.useES5 && match[2]) {
@@ -71,8 +71,7 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
       fileExports.all.push(match[1])
     }
 
-    // match[1] = export names
-    // match[2] = path
+    // match[1] = export names, match[2] = path
     while ((match = exportRegex.selectiveRexport.exec(fileText))) {
       if (!fileExports.reexports) fileExports.reexports = {}
       const subPath = match[2]
@@ -107,32 +106,17 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
 }
 
 /**
- * Processes reexports to add the actual export names to the file keys in which they're reexported.
- * Also flags the reexports in their original file keys as having been reexported so that they can
- * be suppressed in the QuickPick.
+ * 1. Process reexports to add the actual export names to the file keys in which they're reexported.
+ * 2. Flag all these as having been rexported so that `buildImportItems` can decide when to suppress them.
+ * 3. Flag the reexports in their original file keys as having been reexported for the same reason.
  */
 function processCachedData(data) {
   _.each(data, (fileData, mainFilepath) => {
-    if (fileData.all) {
-      fileData.all.forEach(subfilePath => {
-        const subfileExports = getSubfileData(mainFilepath, subfilePath, data)
-        if (!subfileExports || !subfileExports.named) return
-        if (fileData.named) {
-          fileData.named.push(...subfileExports.named)
-        } else {
-          fileData.named = subfileExports.named
-        }
-        subfileExports.reexported = {
-          reexports: subfileExports.named,
-          reexportPath: mainFilepath,
-        }
-      })
-
-      delete fileData.all
-    }
+    const reexportNames = []
 
     if (fileData.reexports) {
       _.each(fileData.reexports, (exportNames, subfilePath) => {
+        reexportNames.push(...exportNames)
         const subfileExports = getSubfileData(mainFilepath, subfilePath, data)
         if (subfileExports) {
           if (!subfileExports.reexported) {
@@ -144,8 +128,28 @@ function processCachedData(data) {
           subfileExports.reexported.reexports.push(...exportNames)
         }
       })
+    }
 
-      delete fileData.reexports
+    if (fileData.all) {
+      fileData.all.forEach(subfilePath => {
+        const subfileExports = getSubfileData(mainFilepath, subfilePath, data)
+        if (!subfileExports || !subfileExports.named) return
+        if (fileData.named) {
+          fileData.named.push(...subfileExports.named)
+        } else {
+          fileData.named = subfileExports.named
+        }
+        reexportNames.push(...subfileExports.named)
+        // flag names in original export location
+        subfileExports.reexported = {
+          reexports: subfileExports.named,
+          reexportPath: mainFilepath,
+        }
+      })
+
+      delete fileData.all
+      // flag names in `index.js` key
+      if (reexportNames.length) fileData.reexports = reexportNames
     }
   })
 

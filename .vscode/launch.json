@@ -26,22 +26,22 @@
             ]
         },
         {
-            "name": "Gatsby",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "${workspaceFolder}/../test-workspaces/js-gatsby",
-                "--extensionDevelopmentPath=${workspaceFolder}"
-            ]
-        },
-        {
             "name": "Single Root ES5",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
                 "${workspaceFolder}/../test-workspaces/js-require",
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ]
+        },
+        {
+            "name": "Single Root Test Workspace",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceFolder}/test/single-root",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ]
         },
