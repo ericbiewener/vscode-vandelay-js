@@ -7,7 +7,7 @@ const defaultModule4, { module4_1,
 const defaultModule5, {
   module5_1,
   type module5_t_1,
-  module5_2 as module4_2_renamed,
+  module5_2 as module5_2_renamed,
   module5_3,
 } = require('module5')
 

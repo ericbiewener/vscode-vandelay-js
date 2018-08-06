@@ -73,11 +73,10 @@ function getNewLine(plugin, importPath, imports) {
     const newLength = line.length + newText.length
     // If it's the last import, we need to make sure that the line end "from ..." text will also fit on the line before
     // appending the new import text.
-    if (
-      (!isLast && newLength <= maxImportLineLength) ||
-      (isLast && newLength + newLineEnd <= maxImportLineLength)
-    ) {
+    if (!isLast && newLength <= maxImportLineLength) {
       line += newText
+    } else if (isLast && newLength + newLineEnd.length <= maxImportLineLength) {
+      fullText += newText
     } else {
       const newLine = tabChar + newText.trim()
       fullText += line + '\n' + newLine

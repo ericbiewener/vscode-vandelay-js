@@ -1,14 +1,25 @@
 const fs = require('fs')
 const _ = require('lodash')
 const path = require('path')
-const { commands, extensions, window, Uri, workspace } = require('vscode')
+const {
+  commands,
+  extensions,
+  window,
+  Uri,
+  workspace,
+  Range,
+} = require('vscode')
 const expect = require('expect')
 const { buildImportItems, insertImport } = require('../src/importing/importer')
-const allImportItems = require('./importItems')
 
-const esVersion = process.env.TEST_PROJECT === 'es5' ? 'es5' : 'es6'
-console.log(`****** TEST PROJECT: ${esVersion.toUpperCase()} ******`)
-const importItems = allImportItems[esVersion]
+let needsCache = true
+const cacheProject = () => {
+  if (!needsCache) return
+  needsCache = false
+  return commands.executeCommand('vandelay.cacheProject')
+}
+
+beforeEach(cacheProject)
 
 afterEach(async function() {
   await commands.executeCommand('workbench.action.closeAllEditors')
@@ -19,7 +30,6 @@ afterEach(async function() {
 const root = workspace.workspaceFolders[0].uri.path
 
 const getPlugin = () => extensions.getExtension('edb.vandelay-js').activate()
-const cacheProject = () => commands.executeCommand('vandelay.cacheProject')
 
 const getExportData = plugin =>
   JSON.parse(fs.readFileSync(plugin.cacheFilePath, 'utf-8'))
@@ -33,22 +43,24 @@ const openFile = (...fileParts) =>
     )
   )
 
-let needsCache = true
+const replaceFileContents = (newText = '') => {
+  const editor = window.activeTextEditor
+  return editor.edit(builder => {
+    builder.replace(
+      editor.document.validateRange(new Range(0, 0, 9999999999, 0)),
+      newText
+    )
+  })
+}
 
-it('cacheProject', async function() {
+xit('cacheProject', async function() {
   const plugin = await extensions.getExtension('edb.vandelay-js').activate()
-  await cacheProject()
-  needsCache = false
   const data = JSON.parse(fs.readFileSync(plugin.cacheFilePath, 'utf-8'))
   expect(data).toMatchSnapshot(this)
 })
 
-it('buildImportItems', async function() {
-  const [plugin] = await Promise.all([
-    getPlugin(),
-    openFile(),
-    needsCache && cacheProject(),
-  ])
+xit('buildImportItems', async function() {
+  const [plugin] = await Promise.all([getPlugin(), openFile()])
   const data = getExportData(plugin)
   data['src2/file1.js'].cached = Date.now()
   let items = plugin._test.getImportItems(plugin, data, buildImportItems)
@@ -61,15 +73,19 @@ it('buildImportItems', async function() {
 })
 
 describe('insertImort', () => {
-  const insertTest = async (context, filepath) => {
-    context.timeout(1000 * 60)
-    const open = () => openFile(filepath)
-    const reopen = async () => {
-      await commands.executeCommand('workbench.action.closeActiveEditor')
-      await open(filepath)
-    }
+  const insertTest = async (context, startingText, filepath) => {
+    context.timeout(1000 * 60 * 1000)
+    const open = () => (filepath ? openFile(filepath) : openFile())
 
     const [plugin] = await Promise.all([getPlugin(), open()])
+    await replaceFileContents(startingText)
+
+    const data = getExportData(plugin)
+    const originalItems = plugin._test.getImportItems(
+      plugin,
+      data,
+      buildImportItems
+    )
 
     const insert = async importItems => {
       for (const item of importItems) {
@@ -78,53 +94,75 @@ describe('insertImort', () => {
       return window.activeTextEditor.document.getText()
     }
 
-    const originalResult = await insert(importItems)
+    const originalResult = await insert(originalItems)
     expect(originalResult).toMatchSnapshot(context, 'original order')
 
-    // eslint-disable-next-line no-unused-vars
-    // for (const i of _.range(10)) {
-    //   await reopen()
-    //   const newArray = _.shuffle(importItems)
-    //   const newResult = await insert(newArray)
-    //   if (newResult !== originalResult)
-    //     console.log(`\n\n${JSON.stringify(newArray)}\n\n`)
-    //   expect(newResult).toBe(originalResult)
-    // }
+    for (let i = 0; i < 10; i++) {
+      await replaceFileContents(startingText)
+      const newArray = _.shuffle(originalItems)
+      const newResult = await insert(newArray)
+      if (newResult !== originalResult) {
+        console.log(`\n\n${JSON.stringify(newArray)}\n\n`)
+      }
+      expect(newResult).toBe(originalResult)
+    }
   }
 
-  xit('insertImport - import order - comment-with-code-right-after.js', async function() {
+  it('import order - empty', async function() {
+    await insertTest(this)
+  })
+
+  it('import order - has code', async function() {
     await insertTest(
       this,
-      path.join(root, 'src1/insert-import/comment-with-code-right-after.js')
+      `const foo = 1
+`
     )
   })
 
-  xit('insertImport - import order - comment-with-linebreak-and-code.js', async function() {
+  it('import order - single line comment', async function() {
     await insertTest(
       this,
-      path.join(root, 'src1/insert-import/comment-with-linebreak-and-code.js')
+      `// I'm a comment
+`
     )
   })
 
-  xit('insertImport - import order - empty.js', async function() {
-    await insertTest(this, path.join(root, 'src1/insert-import/empty.js'))
-  })
-
-  xit('insertImport - import order - has-code.js', async function() {
-    await insertTest(this, path.join(root, 'src1/insert-import/has-code.js'))
-  })
-
-  xit('insertImport - import order - multiline-comment.js', async function() {
+  it('import order - multiline comment', async function() {
     await insertTest(
       this,
-      path.join(root, 'src1/insert-import/multiline-comment.js')
+      `/*
+  I'm a comment
+  With multiple lines
+*/
+`
     )
   })
 
-  xit('insertImport - import order - single-line-comment.js', async function() {
+  it('import order - comment with code right after', async function() {
     await insertTest(
       this,
-      path.join(root, 'src1/insert-import/single-line-comment.js')
+      `// I'm a comment
+const foo = 1
+`
     )
+  })
+
+  it('import order - comment with linebreak and code', async function() {
+    await insertTest(
+      this,
+      `// I'm a comment
+
+const foo = 1
+`
+    )
+  })
+
+  it.only('import order - src1/subdir/file1.js', async function() {
+    await insertTest(this, '', path.join(root, 'src1/subdir/file1.js'))
+  })
+
+  it.only('import order - src2/file1.js', async function() {
+    await insertTest(this, '', path.join(root, 'src2/file1.js'))
   })
 })
