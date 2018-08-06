@@ -28,6 +28,7 @@ function insertImport(plugin, importSelection) {
 
   const importPosition = getImportPosition(
     plugin,
+    exportType,
     finalImportPath,
     isExtraImport,
     imports,

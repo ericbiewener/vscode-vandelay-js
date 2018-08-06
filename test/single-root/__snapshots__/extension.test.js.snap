@@ -87,6 +87,20 @@ Array [
     "label": "module3_3",
   },
   Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module3",
+    "description": "module3",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module3_typeInside",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module3",
+    "description": "module3",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module3_typeOutside",
+  },
+  Object {
     "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module4",
     "description": "module4",
     "exportType": 0,
@@ -155,6 +169,20 @@ Array [
     "exportType": 0,
     "isExtraImport": true,
     "label": "* as FullModule",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module7",
+    "description": "module7",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module7_typeOutside_1",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module7",
+    "description": "module7",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module7_typeOutside_2",
   },
   Object {
     "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/src1/file2.js",
@@ -631,6 +659,20 @@ Array [
     "label": "module3_3",
   },
   Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module3",
+    "description": "module3",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module3_typeInside",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module3",
+    "description": "module3",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module3_typeOutside",
+  },
+  Object {
     "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module4",
     "description": "module4",
     "exportType": 0,
@@ -699,6 +741,20 @@ Array [
     "exportType": 0,
     "isExtraImport": true,
     "label": "* as FullModule",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module7",
+    "description": "module7",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module7_typeOutside_1",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/module7",
+    "description": "module7",
+    "exportType": 2,
+    "isExtraImport": true,
+    "label": "module7_typeOutside_2",
   },
   Object {
     "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/single-root/src1/file1.js",
@@ -1140,6 +1196,10 @@ Object {
         "module3_2 as module3_2_renamed",
         "module3_3",
       ],
+      "types": Array [
+        "module3_typeInside",
+        "module3_typeOutside",
+      ],
     },
     "module4": Object {
       "default": "defaultModule4",
@@ -1165,6 +1225,13 @@ Object {
     "module6": Object {
       "default": "* as FullModule",
       "isExtraImport": true,
+    },
+    "module7": Object {
+      "isExtraImport": true,
+      "types": Array [
+        "module7_typeOutside_1",
+        "module7_typeOutside_2",
+      ],
     },
   },
   "src1/file1.js": Object {

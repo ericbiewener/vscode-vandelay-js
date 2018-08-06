@@ -11,5 +11,6 @@ module.exports = {
   ],
   excludePatterns: [
     path.join(src1, 'insert-import'),
-  ]
+  ],
+  preferTypeOutside: true,
 }

@@ -53,13 +53,13 @@ const replaceFileContents = (newText = '') => {
   })
 }
 
-xit('cacheProject', async function() {
+it('cacheProject', async function() {
   const plugin = await extensions.getExtension('edb.vandelay-js').activate()
   const data = JSON.parse(fs.readFileSync(plugin.cacheFilePath, 'utf-8'))
   expect(data).toMatchSnapshot(this)
 })
 
-xit('buildImportItems', async function() {
+it.only('buildImportItems', async function() {
   const [plugin] = await Promise.all([getPlugin(), openFile()])
   const data = getExportData(plugin)
   data['src2/file1.js'].cached = Date.now()
@@ -165,4 +165,6 @@ const foo = 1
   it.only('import order - src2/file1.js', async function() {
     await insertTest(this, '', path.join(root, 'src2/file1.js'))
   })
+
+  // FIXME: handle full import importing when partial already exists and vice versa?
 })

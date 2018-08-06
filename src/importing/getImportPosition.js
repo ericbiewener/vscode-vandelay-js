@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { commentRegex } = require('../regex')
 const { isPathNodeModule } = require('../utils')
+const { ExportType } = require('./buildImportItems')
 
 /**
  * Determine which line number should get the import. This could be merged into that line
@@ -8,7 +9,14 @@ const { isPathNodeModule } = require('../utils')
  * new import line before or after (indexModifier = -1 or 1)
  **/
 
-function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
+function getImportPosition(
+  plugin,
+  exportType,
+  importPath,
+  isExtraImport,
+  imports,
+  text
+) {
   // If no imports, find first non-comment line
   if (!imports.length) {
     return {
@@ -22,12 +30,13 @@ function getImportPosition(plugin, importPath, isExtraImport, imports, text) {
 
   // First look for an exact match. This is done outside the main sorting loop because we don't care
   // where the exact match is located if it exists.
-  const exactMatch = imports.find(i => i.path === importPath)
-  if (exactMatch) {
-    return {
-      match: exactMatch,
-      indexModifier: 0,
-    }
+  const pathMatches = imports.filter(i => i.path !== importPath)
+  if (pathMatches.length) {
+    const typeGroups = _.partition(pathMatches, i => i.isTypeOutside)
+    const typeMatch = typeGroups[0][0]
+    return typeMatch
+      ? { match: typeMatch, indexModifier: 0 }
+      : { match: typeGroups[1][0], indexModifier: 1 }
   }
 
   const importPos = plugin.utils.getImportOrderPosition(importPath)
