@@ -19,6 +19,15 @@ function parseImports(plugin, text) {
   const imports = []
   let match
   while ((match = regex.exec(text))) {
+    // unassigned import: `import "something"`
+    if (match[1] && (match[1].startsWith("'") || match[1].startsWith('"'))) {
+      // Must reset `lastIndex` to the end of the unassigned import statement because the match will
+      // have gone beyond it
+      const unassignedImportEnd = match[0].indexOf('\n')
+      if (unassignedImportEnd > -1)
+        regex.lastIndex -= match[0].length - unassignedImportEnd
+      continue
+    }
     const isTypeOutside = match[2] && match[1] === 'type '
     const results = {
       path: match[3],

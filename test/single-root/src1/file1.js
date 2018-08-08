@@ -1,3 +1,4 @@
+import 'noAssignment'
 import defaultModule1 from 'module1'
 import { module2_1, module2_2 as module2_2_renamed, type module2_t_1, module2_3 } from 'module2'
 import defaultModule3, { module3_1, module3_2 as module3_2_renamed, module3_3, type module3_typeInside } from 'module3'
@@ -5,6 +6,7 @@ import type { module3_typeOutside } from 'module3'
 import defaultModule4, { module4_1,
   module4_2 as module4_2_renamed,
   module4_3 } from 'module4'
+import 'noAssignment2'
 import defaultModule5, {
   module5_1,
   type module5_t_1,

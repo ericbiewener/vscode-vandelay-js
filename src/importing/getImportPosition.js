@@ -30,13 +30,15 @@ function getImportPosition(
 
   // First look for an exact match. This is done outside the main sorting loop because we don't care
   // where the exact match is located if it exists.
-  const pathMatches = imports.filter(i => i.path !== importPath)
+  const pathMatches = imports.filter(i => i.path === importPath)
   if (pathMatches.length) {
-    const typeGroups = _.partition(pathMatches, i => i.isTypeOutside)
-    const typeMatch = typeGroups[0][0]
-    return typeMatch
-      ? { match: typeMatch, indexModifier: 0 }
-      : { match: typeGroups[1][0], indexModifier: 1 }
+    return {
+      match:
+        (exportType === ExportType.type
+          ? pathMatches.find(p => p.isTypeOutside)
+          : pathMatches.find(p => !p.isTypeOutside)) || pathMatches[0],
+      indexModifier: 0,
+    }
   }
 
   const importPos = plugin.utils.getImportOrderPosition(importPath)

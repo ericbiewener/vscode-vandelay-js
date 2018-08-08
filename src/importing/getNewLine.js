@@ -12,9 +12,10 @@ function getNewLine(plugin, importPath, imports) {
   imports.named.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
   imports.types.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
 
-  const nonDefaultImports = imports.named.concat(
-    imports.types.map(t => 'type ' + t)
-  )
+  const putTypeOutside = !imports.default && !imports.named.length
+  const nonDefaultImports = putTypeOutside
+    ? imports.types
+    : imports.named.concat(imports.types.map(t => 'type ' + t))
 
   let newLineStart = plugin.useES5 ? 'const' : 'import'
   if (imports.default) newLineStart += ' ' + imports.default
@@ -23,6 +24,7 @@ function getNewLine(plugin, importPath, imports) {
   let newLineEnd = ''
   if (nonDefaultImports.length) {
     if (imports.default) newLineStart += ','
+    if (putTypeOutside) newLineStart += ' type'
     newLineStart += ' {'
     if (padCurlyBraces) newLineStart += ' '
     newLineMiddle = nonDefaultImports.join(', ')

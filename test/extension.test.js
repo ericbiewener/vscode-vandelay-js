@@ -24,7 +24,7 @@ beforeEach(cacheProject)
 afterEach(async function() {
   await commands.executeCommand('workbench.action.closeAllEditors')
   // Prevents test failures caused by text editors not being in expected open or closed state
-  return new Promise(resolve => setTimeout(resolve, 10))
+  return new Promise(resolve => setTimeout(resolve, 100))
 })
 
 const root = workspace.workspaceFolders[0].uri.path
@@ -53,13 +53,13 @@ const replaceFileContents = (newText = '') => {
   })
 }
 
-it('cacheProject', async function() {
+it.only('cacheProject', async function() {
   const plugin = await extensions.getExtension('edb.vandelay-js').activate()
   const data = JSON.parse(fs.readFileSync(plugin.cacheFilePath, 'utf-8'))
   expect(data).toMatchSnapshot(this)
 })
 
-it.only('buildImportItems', async function() {
+it('buildImportItems', async function() {
   const [plugin] = await Promise.all([getPlugin(), openFile()])
   const data = getExportData(plugin)
   data['src2/file1.js'].cached = Date.now()
@@ -74,7 +74,7 @@ it.only('buildImportItems', async function() {
 
 describe('insertImort', () => {
   const insertTest = async (context, startingText, filepath) => {
-    context.timeout(1000 * 60 * 1000)
+    context.timeout(1000 * 60)
     const open = () => (filepath ? openFile(filepath) : openFile())
 
     const [plugin] = await Promise.all([getPlugin(), open()])
@@ -158,13 +158,11 @@ const foo = 1
     )
   })
 
-  it.only('import order - src1/subdir/file1.js', async function() {
+  it('import order - src1/subdir/file1.js', async function() {
     await insertTest(this, '', path.join(root, 'src1/subdir/file1.js'))
   })
 
-  it.only('import order - src2/file1.js', async function() {
+  it('import order - src2/file1.js', async function() {
     await insertTest(this, '', path.join(root, 'src2/file1.js'))
   })
-
-  // FIXME: handle full import importing when partial already exists and vice versa?
 })

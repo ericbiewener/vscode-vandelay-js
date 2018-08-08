@@ -4,6 +4,11 @@ const _ = require('lodash')
 const { basename, isPathNodeModule } = require('./utils')
 const { parseImports, exportRegex } = require('./regex')
 
+function processDefaultName(plugin, defaultName, importPath) {
+  if (!plugin.processDefaultName) return defaultName
+  return plugin.processDefaultName(importPath) || defaultName
+}
+
 function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
   const fileExports = {}
   const fileText = fs.readFileSync(filepath, 'utf8')
@@ -13,7 +18,13 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
     if (isPathNodeModule(plugin, importData.path)) {
       const existing = data._extraImports[importData.path] || {}
       data._extraImports[importData.path] = existing
-      if (importData.default) existing.default = importData.default
+      if (importData.default) {
+        existing.default = processDefaultName(
+          plugin,
+          importData.default,
+          importData.path
+        )
+      }
       if (importData.named)
         existing.named = _.union(existing.named, importData.named)
       if (importData.types)
@@ -38,15 +49,9 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
 
   while ((match = mainRegex.exec(fileText))) {
     if (match[1] === 'default' || (plugin.useES5 && match[1])) {
-      if (filepath.endsWith('index.js')) {
-        fileExports.default = basename(path.dirname(filepath))
-      } else {
-        if (plugin.processDefaultName) {
-          const name = plugin.processDefaultName(filepath)
-          if (name) fileExports.default = name
-        }
-        if (!fileExports.default) fileExports.default = basename(filepath)
-      }
+      fileExports.default = filepath.endsWith('index.js')
+        ? basename(path.dirname(filepath))
+        : processDefaultName(plugin, basename(filepath), filepath)
     } else if (!plugin.useES5 && !match[2] && !match[1].endsWith(',')) {
       // endsWith(',') — it's actually a reexport
       // export myVar  |  export myVar from ...
