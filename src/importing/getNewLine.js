@@ -1,7 +1,7 @@
 function getNewLine(plugin, importPath, imports) {
   const {
     padCurlyBraces,
-    quoteType,
+    useSingleQuotes,
     useSemicolons,
     maxImportLineLength,
     multilineImportStyle,
@@ -12,7 +12,8 @@ function getNewLine(plugin, importPath, imports) {
   imports.named.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
   imports.types.sort((a, b) => a.localeCompare(b, undefined, sensitivity))
 
-  const putTypeOutside = !imports.default && !imports.named.length
+  const putTypeOutside =
+    plugin.preferTypeOutside && !imports.default && !imports.named.length
   const nonDefaultImports = putTypeOutside
     ? imports.types
     : imports.named.concat(imports.types.map(t => 'type ' + t))
@@ -32,7 +33,7 @@ function getNewLine(plugin, importPath, imports) {
     newLineEnd += '}'
   }
 
-  const quoteChar = quoteType === 'single' ? "'" : '"'
+  const quoteChar = useSingleQuotes ? "'" : '"'
   newLineEnd += ` ${
     plugin.useES5 ? '= require(' : 'from'
   } ${quoteChar}${importPath}${quoteChar}${plugin.useES5 ? ')' : ''}`

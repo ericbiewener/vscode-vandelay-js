@@ -17,11 +17,11 @@ async function activate(context) {
     processCachedData,
     buildImportItems,
     insertImport,
+    useSingleQuotes: true,
     padCurlyBraces: true,
     useSemicolons: true,
-    commaDangle: false,
+    commaDangle: true,
     multilineImportStyle: 'multi',
-    quoteType: 'single',
     finalizePlugin(plugin) {
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
       Object.assign(_test, plugin, {

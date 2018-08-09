@@ -1482,7 +1482,7 @@ Object {
 }
 `;
 
-exports[`insertImort | import order - comment with code right after - original order 1`] = `
+exports[`insertImport | import order - comment with code right after - original order 1`] = `
 "// I'm a comment
 import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
@@ -1516,7 +1516,7 @@ const foo = 1
 "
 `;
 
-exports[`insertImort | import order - comment with linebreak and code - original order 1`] = `
+exports[`insertImport | import order - comment with linebreak and code - original order 1`] = `
 "// I'm a comment
 import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
@@ -1550,7 +1550,7 @@ const foo = 1
 "
 `;
 
-exports[`insertImort | import order - empty - original order 1`] = `
+exports[`insertImport | import order - empty - original order 1`] = `
 "import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
 import { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
@@ -1581,7 +1581,7 @@ import { src1_subdir_file1_1 } from './subdir/file1'
 "
 `;
 
-exports[`insertImort | import order - has code - original order 1`] = `
+exports[`insertImport | import order - has code - original order 1`] = `
 "import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
 import { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
@@ -1614,7 +1614,7 @@ const foo = 1
 "
 `;
 
-exports[`insertImort | import order - multiline comment - original order 1`] = `
+exports[`insertImport | import order - multiline comment - original order 1`] = `
 "/*
   I'm a comment
   With multiple lines
@@ -1649,7 +1649,7 @@ import { src1_subdir_file1_1 } from './subdir/file1'
 "
 `;
 
-exports[`insertImort | import order - single line comment - original order 1`] = `
+exports[`insertImport | import order - single line comment - original order 1`] = `
 "// I'm a comment
 import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
@@ -1681,7 +1681,7 @@ import { src1_subdir_file1_1 } from './subdir/file1'
 "
 `;
 
-exports[`insertImort | import order - src1/subdir/file1.js - original order 1`] = `
+exports[`insertImport | import order - src1/subdir/file1.js - original order 1`] = `
 "import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
 import { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
@@ -1713,7 +1713,7 @@ import * as AllFile7Exports, { src1_file7_1, src1_file7_2, src1_file7_3, src1_fi
 "
 `;
 
-exports[`insertImort | import order - src2/file1.js - original order 1`] = `
+exports[`insertImport | import order - src2/file1.js - original order 1`] = `
 "import defaultModule1 from 'module1'
 import defaultModule_file2 from 'module1_file2'
 import { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
