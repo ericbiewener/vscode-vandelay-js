@@ -12,7 +12,7 @@
 Most (All?) options are optional. Be sure to see config options in CORE. There are required ones
 there.
 
-##### `useES5?: boolean`
+#### useES5?: boolean
 Defaults to `false`. If your project uses ES5 module syntax (i.e. `require`) you should set this to
 true. Only `module.exports = { foo, bar }` and `module.exports = defaultExport` syntax is supported.
   
