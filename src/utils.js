@@ -6,8 +6,8 @@ function basename(filepath) {
 
 function isPathNodeModule(plugin, importPath) {
   if (importPath.startsWith('.')) return false
-  if (!plugin.absolutePaths) return true
-  return !plugin.absolutePaths.some(
+  if (!plugin.nonModulePaths) return true
+  return !plugin.nonModulePaths.some(
     p => p === importPath || importPath.startsWith(p + '/')
   )
 }

@@ -1,4 +1,4 @@
-const { extensions, commands } = require('vscode')
+const { commands, extensions, window } = require('vscode')
 const { cacheFile, processCachedData } = require('./cacher')
 const { insertImport } = require('./importing/importer')
 const {
@@ -7,7 +7,14 @@ const {
 } = require('./importing/buildImportItems')
 
 async function activate(context) {
-  const vandelay = await extensions.getExtension('edb.vandelay').activate()
+  const ext = extensions.getExtension('edb.vandelay')
+  if (!ext) {
+    window.showErrorMessage(
+      'You must install the core Vandelay package to use Vandelay JS: https://github.com/ericbiewener/vscode-vandelay'
+    )
+    return
+  }
+  const vandelay = await ext.activate()
 
   const _test = {}
 
