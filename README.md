@@ -60,7 +60,7 @@ The configuration file should be written in JavaScript and export an object (`mo
 An array of filepaths that Vandelay should watch for exports. This is the only required configuration option.
 
 ### `excludePatterns: Array<string | RegExp>`
-An array of glob patterns or regular expressions that match filepaths which should be excluded from caching.
+An array of glob patterns and regular expressions that match filepaths which should be excluded from caching.
 This plugin automatically excludes `node_modules`.
 
 ### `importGroups: Array<string>`
