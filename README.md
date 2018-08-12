@@ -132,9 +132,9 @@ falsey value will all the standard relative path to be used.
 
 ```js
 processImportPath: (importPath, absImportPath, activeFilepath, projectRoot) => (
-  return absImportPath.startsWith("/Users/eric/my-project/absoluteImportDirectory")
+  absImportPath.startsWith("/Users/eric/my-project/absoluteImportDirectory")
     ? absImportPath.slice(projectRoot.length + 1)
-),
+)
 ```
 
 ### `nonModulePaths: Array<string>`
@@ -151,9 +151,9 @@ May be used to exclude certain imports from the list of options.
 * `activeFilepath`: absolute path to the active file open in your editor
 
 ```js
-    shouldIncludeImport: (absImportPath, activeFilepath) => (
-      absImportPath.includes('__mocks__') && !activeFilepath.endsWith('.test.js')
-    )
+shouldIncludeImport: (absImportPath, activeFilepath) => (
+  absImportPath.includes('__mocks__') && !activeFilepath.endsWith('.test.js')
+)
 ```
 
 ### `preferTypeOutside: boolean`
