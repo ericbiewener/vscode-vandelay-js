@@ -2,21 +2,17 @@ const path = require('path')
 const jest = require('jest-snapshot')
 const expect = require('expect')
 
-let initialized
 let snapshotState
 let matcher
 
-function toMatchSnapshot(received, { test }, currentTestName) {
-  if (!initialized) {
-    // Lazy initaialization: if imported into test/index.js, afterEach global will not be available yet
-    afterEach(() => {
-      if (!snapshotState) return
-      snapshotState.save()
-      snapshotState = null
-      matcher = null
-    })
-  }
+afterEach(() => {
+  if (!snapshotState) return
+  snapshotState.save()
+  snapshotState = null
+  matcher = null
+})
 
+function toMatchSnapshot(received, { test }, currentTestName) {
   if (!snapshotState) {
     snapshotState = new jest.SnapshotState(test.file, {
       updateSnapshot: process.env.UPDATE_SNAPSHOT ? 'all' : 'new',

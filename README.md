@@ -48,6 +48,8 @@ You must create a file named `vandelay-js.js` at the root of your project. If us
 workspace, set the `vandelay.configLocation` workspace setting to the absolute path to the
 `vandelay-js.js` file.
 
+#### Any time you make changes to this file, you must reload the window.
+
 Along with providing configuration options, the presence of this file tells the plugin that it
 should track your project's JavaScript imports. The lack of a `vandelay-js.js` file in a given
 project will simply cause the plugin not to run.

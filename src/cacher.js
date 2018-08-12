@@ -49,9 +49,10 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
 
   while ((match = mainRegex.exec(fileText))) {
     if (match[1] === 'default' || (plugin.useES5 && match[1])) {
-      fileExports.default = filepath.endsWith('index.js')
+      const proposedName = filepath.endsWith('index.js')
         ? basename(path.dirname(filepath))
-        : processDefaultName(plugin, basename(filepath), filepath)
+        : basename(filepath)
+      fileExports.default = processDefaultName(plugin, proposedName, filepath)
     } else if (!plugin.useES5 && !match[2] && !match[1].endsWith(',')) {
       // endsWith(',') — it's actually a reexport
       // export myVar  |  export myVar from ...

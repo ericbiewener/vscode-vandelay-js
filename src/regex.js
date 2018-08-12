@@ -9,10 +9,8 @@ const _ = require('lodash')
  *    2. named/type imports
  *    3. path
  */
-// TODO: check for whether any `+` or `*` should be made non-greedy by adding whatever character
-// they're looking for later on the line (e.g. by having an inline comment)
 const importRegex = /^import +?([^{]+?[, ])? *(?:{([^]*?)} +)?from +["|'](.*)["|'].*/gm
-const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\(['|"](.*?)['|"].*/gm
+const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\( *['|"](.*?)['|"].*/gm
 
 function parseImports(plugin, text) {
   const regex = plugin.useES5 ? requireRegex : importRegex

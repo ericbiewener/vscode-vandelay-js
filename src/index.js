@@ -31,9 +31,8 @@ async function activate(context) {
     multilineImportStyle: 'multi',
     finalizePlugin(plugin) {
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
-      Object.assign(_test, plugin, {
-        _test: vandelay._test,
-      })
+      plugin._test = vandelay._test
+      _test.plugin = plugin
     },
   })
 

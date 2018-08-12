@@ -20,6 +20,4 @@ testRunner.configure({
   timeout: 5000,
 })
 
-require('./toMatchSnapshot')
-
 module.exports = testRunner

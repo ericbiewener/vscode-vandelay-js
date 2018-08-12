@@ -35,8 +35,8 @@ function getNewLine(plugin, importPath, imports) {
 
   const quoteChar = useSingleQuotes ? "'" : '"'
   newLineEnd += ` ${
-    plugin.useES5 ? '= require(' : 'from'
-  } ${quoteChar}${importPath}${quoteChar}${plugin.useES5 ? ')' : ''}`
+    plugin.useES5 ? '= require(' : 'from '
+  }${quoteChar}${importPath}${quoteChar}${plugin.useES5 ? ')' : ''}`
   if (useSemicolons) newLineEnd += ';'
 
   // Split up line if necessary
@@ -73,21 +73,21 @@ function getNewLine(plugin, importPath, imports) {
     let newText = (i > 0 ? ' ' : '') + name
     if (!isLast) newText += ','
 
-    const newLength = line.length + newText.length
-    // If it's the last import, we need to make sure that the line end "from ..." text will also fit on the line before
-    // appending the new import text.
-    if (!isLast && newLength <= maxImportLineLength) {
+    // By adding `newLineEnd.length` if it's last, we prevent the `} from...` part from being on a
+    // line without any imports. In other words, even if the last import could fit on the previous
+    // line, we force it onto the last one with the `from...` part.
+    const newLength =
+      line.length + newText.length + (isLast ? newLineEnd.length : 0)
+
+    if (newLength <= maxImportLineLength) {
       line += newText
-    } else if (isLast && newLength + newLineEnd.length <= maxImportLineLength) {
-      fullText += newText
     } else {
-      const newLine = tabChar + newText.trim()
-      fullText += line + '\n' + newLine
-      line = newLine
+      fullText += line + '\n'
+      line = tabChar + newText.trim()
     }
   })
 
-  return fullText + newLineEnd
+  return fullText + line + newLineEnd
 }
 
 module.exports = {
