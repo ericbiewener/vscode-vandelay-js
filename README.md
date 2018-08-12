@@ -1,14 +1,14 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/logo.png" width="128" height="112" />
-</p>
+<p align="center"><img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/logo.png" width="128" height="112" align="center" /></p>
+<h1 align="center">Vandelay JS</h1>
 
 <p align="center">
-  Official JavaScript plugin for the <a href="https://github.com/ericbiewener/vscode-vandelay">Vandelay VS Code extension</a>.
+  <strong>Official JavaScript plugin for the <a href="https://github.com/ericbiewener/vscode-vandelay">Vandelay VS Code extension</a></strong>.
   <br />
   An official <a href="https://github.com/ericbiewener/vscode-vandelay-py">Python</a> plugin also exists.
 </p>
 
 ## Overview
+<a href="https://www.youtube.com/watch?v=W4AN8Eb2LL0&t=2m10s" target="_blank"><img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay/master/artwork/video.jpg" alt="He's an importer exporter" width="240" align="right" /></a>
 Importing code is annoying and the current VS Code tooling to help with it just isn't good enough.
 This plugin keeps track of all available imports and allows you to quickly import them following
 whatever style guide your project requires for how import statements get written (see
@@ -33,7 +33,7 @@ active word are found, you'll be asked to choose.
 ### Import type
 Select an available import, but filtered to show just types.
 
-## Importing from `node_modules`
+## Importing from node_modules
 Rather than try to actually parse and track all the possible imports in your project's
 `node_modules` folder, Vandelay JS simply tracks the ones that you use. That means you'll need to
 write the import statement yourself the very first time you use a node_modules import, but the
