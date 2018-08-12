@@ -177,8 +177,7 @@ module.exports = {
   includePaths: [src1, src2, src3],
   excludePatterns: [
     // No need to include `node_modules`. Vandelay will exclude that automatically.
-    "**/*.test.js",
-    /.*\.test\..*/,
+    "**/*.test.*",
     /.*\/flow-typed\/.*/,
     /.*\/config\/.*/,
   ],
