@@ -302,7 +302,7 @@ Array [
 ]
 `;
 
-exports[`import - commaDangle = false 1`] = `
+exports[`import - trailingComma = false 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
 const {

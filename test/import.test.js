@@ -117,10 +117,10 @@ it('import - multilineImportStyle = single', async function() {
   await configInsertTest(this, { multilineImportStyle: 'single' })
 })
 
-it('import - commaDangle = false', async function() {
+it('import - trailingComma = false', async function() {
   await configInsertTest(this, {
     multilineImportStyle: 'single',
-    commaDangle: false,
+    trailingComma: false,
   })
 })
 

@@ -27,7 +27,7 @@ async function activate(context) {
     useSingleQuotes: true,
     padCurlyBraces: true,
     useSemicolons: true,
-    commaDangle: true,
+    trailingComma: true,
     multilineImportStyle: 'multi',
     finalizePlugin(plugin) {
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)

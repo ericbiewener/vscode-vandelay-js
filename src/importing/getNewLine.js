@@ -5,7 +5,7 @@ function getNewLine(plugin, importPath, imports) {
     useSemicolons,
     maxImportLineLength,
     multilineImportStyle,
-    commaDangle,
+    trailingComma,
   } = plugin
 
   const sensitivity = { sensitivity: 'base' }
@@ -57,7 +57,7 @@ function getNewLine(plugin, importPath, imports) {
       '\n' +
       tabChar +
       nonDefaultImports.join(',\n' + tabChar) +
-      (commaDangle ? ',' : '') +
+      (trailingComma ? ',' : '') +
       '\n' +
       newLineEnd.trim()
 
