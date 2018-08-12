@@ -52,16 +52,26 @@ Along with providing configuration options, the presence of this file tells the 
 should track your project's JavaScript imports. The lack of a `vandelay-js.js` file in a given
 project will simply cause the plugin not to run.
 
-The below confiugration options are entirely optional. This should be written in JavaScript,
-ultimately export an object (`module.exports = { ... }`) containing the desired configuration
-options. See [this example configuration file](#example configuration file).
+The configuration file should be written in JavaScript and export an object (`module.exports = { ...
+}` syntax) containing the desired configuration options. See 
+[this example configuration file](#example configuration file).
 
-# SHARED WITH PYTHON
-# `includePaths: string[]` REQUIRED
-# `importGroups: string[] | Array<string[]> -- only the latter for python! works differently for each plugin
-# maxImportLineLength
+### `includePaths: Array<string>`
+An array of filepaths that Vandelay should watch for exports. This is the only required configuration option.
 
-### useES5: boolean
+### `excludePatterns: Array<string | RegExp>`
+An array of glob patterns or regular expressions that match filepaths which should be excluded from caching.
+This plugin automatically excludes `node_modules`.
+
+### `importGroups: Array<string>`
+Vandelay will automatically sort import statements so that node modules come before your project's
+custom imports, and alphabetize them by path. This configuration option allows you to select
+specific imports that should always be sorted first.
+
+### `maxImportLineLength: number`
+Defaults to 100. Used to determine when to write multiline import statements.
+
+### `useES5: boolean`
 Defaults to `false`. If your project uses ES5 module syntax (i.e. `require`) you should set this to
 true. Only `module.exports = { foo, bar }` and `module.exports = defaultExport` syntax is supported.
   
@@ -75,7 +85,7 @@ Defaults to `true`. Whether import statements should be writting with single or 
 ### `useSemicolons: boolean`
 Defaults to `true`. Whether import statements should be writting with semicolons.
 
-### `multilineImportStyle: multiple | single`
+### `multilineImportStyle: 'multiple' | 'single'`
 Defaults to `multiple`. Whether to allow multiple imports on a line when the import needs to span
 multiple lines because it has gone over the allowed line length (LINK TO CORE README LINE LENGTH)
 
@@ -97,10 +107,6 @@ import {
 ### `commaDangle: boolean`
 Defaults to `true`. Whether multiline statements should include trailing commas. Only relevant when
 `multilineImportStyle` is `single`.
-
-### `excludePatterns: Array<string | RegExp>`
-Glob patterns or regular expressions that match filepaths which should be excluded from caching.
-This plugin automatically excludes `node_modules`.
 
 ### `processDefaultName: filepath => ?string`
 Default exports will be tracked using the file name (i.e. a default export in `myFile.js` will be
@@ -131,7 +137,7 @@ processImportPath: (importPath, absImportPath, activeFilepath, projectRoot) => (
 ),
 ```
 
-### `nonModulePaths: string[]`
+### `nonModulePaths: Array<string>`
 if you have configured your build tool to allow imports relative to the project root for certain
 paths (thus causing them not to begin with `./` or `../`), specify the roots of these paths here.
 *This is done only to prevent them from being considered node_module imports when caching or
