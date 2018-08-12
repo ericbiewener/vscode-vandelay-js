@@ -10,6 +10,7 @@
 <p align="center">
 <img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/vandelay-js.gif" width="757" height="426" align="center" />
 </p>
+
 ## Overview
 <a href="https://www.youtube.com/watch?v=W4AN8Eb2LL0&t=2m10s" target="_blank"><img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay/master/artwork/video.jpg" alt="He's an importer exporter" width="240" align="right" /></a>
 Importing code is annoying and the current VS Code tooling to help with it just isn't good enough.
