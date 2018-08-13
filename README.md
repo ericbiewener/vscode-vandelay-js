@@ -8,8 +8,9 @@
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/animation-shadow.gif" width="757" height="426" align="center" />
+<img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/animation.gif" width="757" height="426" align="center" />
 </p>
+<br />
 
 ## Overview
 <a href="https://www.youtube.com/watch?v=W4AN8Eb2LL0&t=2m10s" target="_blank"><img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay/master/artwork/video.jpg" alt="He's an importer exporter" width="240" align="right" /></a>
