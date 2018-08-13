@@ -7,6 +7,7 @@
   An official <a href="https://github.com/ericbiewener/vscode-vandelay-py">Python</a> plugin also exists.
 </p>
 
+<br />
 <p align="center">
 <img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/animation.gif" width="757" height="426" align="center" />
 </p>
