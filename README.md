@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/vandelay-js.gif" width="757" height="426" align="center" />
+<img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay-js/master/artwork/animation-shadow.gif" width="757" height="426" align="center" />
 </p>
 
 ## Overview
