@@ -7,6 +7,7 @@ import defaultModule4, { module4_1,
   module4_2 as module4_2_renamed,
   module4_3 } from 'module4'
 import 'noAssignment2'
+import { src3_file1_1 } from "src3/file1"
 import defaultModule5, {
   module5_1,
   type module5_t_1,

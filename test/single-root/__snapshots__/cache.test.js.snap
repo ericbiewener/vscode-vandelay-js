@@ -966,6 +966,11 @@ Object {
       "src2_file1_1",
     ],
   },
+  "src3/file1.js": Object {
+    "named": Array [
+      "src3_file1_1",
+    ],
+  },
 }
 `;
 

@@ -41,9 +41,10 @@ Select an available import, but filtered to show just types.
 
 ## Importing from node_modules
 Rather than try to actually parse and track all the possible imports in your project's
-`node_modules` folder, Vandelay JS simply tracks the ones that you use. That means you'll need to
+`node_modules` folder, Vandelay JS simply tracks the ones you use. This means you'll need to
 write the import statement yourself the very first time you use a node_modules import, but the
-plugin will remember it after that and make it available for automatic importing.
+plugin will remember it after that and make it available for automatic importing. The same thing
+goes for node system imports.
 
 ## How to Use
 Vandelay relies on JavaScript configuration files, not simply JSON. As the below configuration
@@ -51,16 +52,16 @@ options demonstrate, this allows the plugin to be fully customized to your proje
 
 ## Configuration (vandelay-js.js)
 You must create a file named `vandelay-js.js` at the root of your project. If using a multi-root
-workspace, set the `vandelay.configLocation` workspace setting to the absolute path to the
+workspace, set the `vandelay.configLocation` workspace setting to the **directory** containing the
 `vandelay-js.js` file.
 
-#### Any time you make changes to this file, you must reload the window.
+#### *Any time you make changes to this file, you must reload the window.*
 
 Along with providing configuration options, the presence of this file tells the plugin that it
 should track your project's JavaScript imports. The lack of a `vandelay-js.js` file in a given
 project will simply cause the plugin not to run.
 
-The configuration file should be written in JavaScript and export an object (`module.exports = { ...
+The configuration file must be written in JavaScript and export an object (`module.exports = { ...
 }` syntax) containing the desired configuration options. See 
 [this example configuration file](#example configuration file).
 
@@ -73,7 +74,7 @@ This plugin automatically excludes `node_modules`.
 
 ### `importGroups: Array<string>`
 Vandelay will automatically sort import statements so that node modules come before your project's
-custom imports, and alphabetize them by path. This configuration option allows you to select
+custom imports, and it will alphabetize them by path. This configuration option allows you to select
 specific imports that should always be sorted first.
 
 ### `maxImportLineLength: number`
@@ -148,6 +149,8 @@ processImportPath: (importPath, absImportPath, activeFilepath, projectRoot) => (
 ### `nonModulePaths: Array<string>`
 if you have configured your build tool to allow imports relative to the project root for certain
 paths (thus causing them not to begin with `./` or `../`), specify the roots of these paths here.
+These should not be absolute paths, e.g. use `src1` not `Users/eric/my-project/src1`.
+
 *This is done only to prevent them from being considered node_module imports when caching or
 determining import order*. You must use `processImportPath` to have the desired path actually get
 written to the file instead of the relative path.
@@ -176,7 +179,6 @@ path then the syntax `import { myVal, type1, type2 } ...` will be used.
 const path = require('path')
 
 const root = '/Users/foo/my-project'
-
 const src1 = path.join(root, 'src1')
 const src2 = path.join(root, 'src2')
 const src3 = path.join(root, 'src3')
@@ -189,6 +191,7 @@ module.exports = {
     /.*\/flow-typed\/.*/,
     /.*\/config\/.*/,
   ],
+  importGroups: ['react', 'react-dom', 'redux', 'react-redux'],
   padCurlyBraces: false,
   useSingleQuotes: false,
   useSemicolons: false,
