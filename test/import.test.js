@@ -98,7 +98,8 @@ it('import - importGroups', async function() {
 })
 
 it('import - maxImportLineLength', async function() {
-  await configInsertTest(this, { maxImportLineLength: 50 })
+  // Length of 45 needed to test lines that come up right against the limit
+  await configInsertTest(this, { maxImportLineLength: 45 })
 })
 
 it('import - padCurlyBraces = false', async function() {

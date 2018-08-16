@@ -102,6 +102,36 @@
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/test"
             ]
-        }
+        },
+        {
+            "name": "Tests - FULL - Single Root",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "TEST_PROJECT": "single-root",
+                "FULL_INSERT_TEST": "true"
+            },
+            "args": [
+                "${workspaceFolder}/test/single-root",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Tests - FULL - Single Root ES5",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "TEST_PROJECT": "es5",
+                "FULL_INSERT_TEST": "true"
+            },
+            "args": [
+                "${workspaceFolder}/test/es5",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test"
+            ]
+        },
     ]
 }

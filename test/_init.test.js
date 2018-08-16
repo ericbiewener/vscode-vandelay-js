@@ -1,7 +1,5 @@
 const { commands } = require('vscode')
-
 const { getPlugin } = require('./utils')
-
 require('./toMatchSnapshot')
 
 let clone
@@ -20,4 +18,8 @@ afterEach(async () => {
   for (const k in plugin) {
     if (!clone.hasOwnProperty(k)) delete plugin[k]
   }
+
+  await commands.executeCommand('workbench.action.closeAllEditors')
+  // Prevents test failures caused by text editors not being in expected open or closed state
+  return new Promise(resolve => setTimeout(resolve, 10))
 })

@@ -3,7 +3,7 @@ const path = require('path')
 const sinon = require('sinon')
 const { cacheTest, testRoot, testSpyCall } = require('./utils')
 
-it.only('cacheProject', async function() {
+it('cacheProject', async function() {
   await cacheTest(this)
 })
 

@@ -308,6 +308,11 @@ Object {
       "src1_subdir_file1_1",
     ],
   },
+  "src3/file1.js": Object {
+    "named": Array [
+      "src3_file1_1",
+    ],
+  },
 }
 `;
 
@@ -641,6 +646,11 @@ Object {
   "src2/file1.js": Object {
     "named": Array [
       "src2_file1_1",
+    ],
+  },
+  "src3/file1.js": Object {
+    "named": Array [
+      "src3_file1_1",
     ],
   },
 }
@@ -1026,6 +1036,12 @@ Object {
         "module7_typeOutside_2",
       ],
     },
+    "src3/file1": Object {
+      "isExtraImport": true,
+      "named": Array [
+        "src3_file1_1",
+      ],
+    },
   },
   "src1/file1.js": Object {
     "default": "file1",
@@ -1270,6 +1286,11 @@ Object {
   "src2/file1.js": Object {
     "named": Array [
       "src2_file1_1",
+    ],
+  },
+  "src3/file1.js": Object {
+    "named": Array [
+      "src3_file1_1",
     ],
   },
 }

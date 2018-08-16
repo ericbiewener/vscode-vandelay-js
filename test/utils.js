@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const path = require('path')
 const fs = require('fs-extra')
 const expect = require('expect')
@@ -57,7 +58,7 @@ const insertItems = async (plugin, importItems) => {
 }
 
 const insertTest = async (context, startingText, filepath) => {
-  context.timeout(1000 * 60)
+  context.timeout(6000 * 5)
   const open = () => (filepath ? openFile(filepath) : openFile())
 
   const [plugin] = await Promise.all([getPlugin(), open()])
@@ -67,18 +68,21 @@ const insertTest = async (context, startingText, filepath) => {
   const originalResult = await insertItems(plugin, originalItems)
   expect(originalResult).toMatchSnapshot(context, 'original order')
 
-  // for (let i = 0; i < 10; i++) {
-  //   await replaceFileContents(startingText)
-  //   const newArray = _.shuffle(originalItems)
-  //   const newResult = await insertItems(plugin, newArray)
-  //   if (newResult !== originalResult) {
-  //     console.log(`\n\n${JSON.stringify(newArray)}\n\n`)
-  //   }
-  //   expect(newResult).toBe(originalResult)
-  // }
+  if (process.env.FULL_INSERT_TEST) {
+    for (let i = 0; i < 10; i++) {
+      await replaceFileContents(startingText)
+      const newArray = _.shuffle(originalItems)
+      const newResult = await insertItems(plugin, newArray)
+      if (newResult !== originalResult) {
+        console.log(`\n\n${JSON.stringify(newArray)}\n\n`)
+      }
+      expect(newResult).toBe(originalResult)
+    }
+  }
 }
 
 const configInsertTest = async (context, config, reCache) => {
+  context.timeout(6000 * 5)
   if (reCache) await commands.executeCommand('vandelay.cacheProject')
   const [plugin] = await Promise.all([getPlugin(), openFile()])
   await replaceFileContents()

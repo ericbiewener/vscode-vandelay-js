@@ -73,19 +73,15 @@ function getNewLine(plugin, importPath, imports) {
     let newText = (i > 0 ? ' ' : '') + name
     if (!isLast) newText += ','
 
-    // By adding `newLineEnd.length` if it's last, we prevent the `} from...` part from being on a
-    // line without any imports. In other words, even if the last import could fit on the previous
-    // line, we force it onto the last one with the `from...` part.
-    const newLength =
-      line.length + newText.length + (isLast ? newLineEnd.length : 0)
-
-    if (newLength <= maxImportLineLength) {
+    if (line.length + newText.length <= maxImportLineLength) {
       line += newText
     } else {
       fullText += line + '\n'
       line = tabChar + newText.trim()
     }
   })
+
+  if (line.length + newLineEnd.length > maxImportLineLength) line += '\n'
 
   return fullText + line + newLineEnd
 }
