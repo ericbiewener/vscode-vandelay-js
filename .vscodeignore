@@ -5,3 +5,8 @@ test/**
 jsconfig.json
 vsc-extension-quickstart.md
 .eslintrc.json
+artwork
+jsconfig.json
+package-lock.json
+vandelay-js.js
+yarn-error.log
