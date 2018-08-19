@@ -20,6 +20,9 @@ This plugin keeps track of all available imports and allows you to quickly impor
 whatever style guide your project requires for how import statements get written (see
 [Configuration](#configuration)). Multi-root workspaces are supported.
 
+## Flow & Typescript Support
+Flow types are supported, but Typescript currently is not.
+
 ## Commands
 
 ### Cache Project Exports
@@ -37,7 +40,7 @@ A shortcut to automatically import the word under the carat. If more than one im
 active word are found, you'll be asked to choose.
 
 ### Import type
-Select an available import, but filtered to show just types.
+Select an available import, but filtered to show just Flow types.
 
 ## Importing from node_modules
 Rather than try to actually parse and track all the possible imports in your project's
@@ -168,7 +171,7 @@ shouldIncludeImport: (absImportPath, activeFilepath) => (
 ```
 
 ### `preferTypeOutside: boolean`
-Defaults to `false`. If using flow, settings this to `true` will cause import statements for types
+Defaults to `false`. If using Flow, settings this to `true` will cause import statements for types
 to put the type on the outside of the braces (`import type { type1, type2 } ...`) *so long as only
 types are being imported from the given import path*. This can help mitigate circular dependency
 issues under some circumstances. Regardless of this setting, if a value import exists for a given

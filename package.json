@@ -2,7 +2,7 @@
   "name": "vandelay-js",
   "displayName": "Vandelay JavaScript",
   "description": "Automatically generate import statements for JavaScript.",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "publisher": "edb",
   "author": "Eric Biewener",
   "license": "MIT",
@@ -18,7 +18,8 @@
     "Programming Languages",
     "Snippets",
     "Formatters",
-    "Other"
+    "Other",
+    "Extension Packs"
   ],
   "keywords": [
     "multi-root ready",
@@ -37,6 +38,9 @@
   },
   "activationEvents": [
     "*"
+  ],
+  "extensionDependencies": [
+    "edb.vandelay"
   ],
   "main": "./src/index.js",
   "contributes": {
