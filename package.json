@@ -37,9 +37,8 @@
     "vscode": "^1.21.0"
   },
   "activationEvents": [
-    "onLanguage:javascriptreact",
-    "onLanguage:javascript",
-    "onCommand:vandelay.cacheProject"
+    "workspaceContains:vandelay-js.js",
+    "workspaceContains:.vandelay/vandelay-js.js"
   ],
   "extensionDependencies": [
     "edb.vandelay"

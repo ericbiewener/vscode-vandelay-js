@@ -13,12 +13,23 @@
 </p>
 <br />
 
+## Table of Contents
+- [Overview](#Overview)
+- [Flow & Typescript Support](#Flow--Typescript-Support)
+- [Commands](#Commands)
+- [Importing from node_modules](#Importing-from-node_modules)
+- [How to Use](#How-to-Use)
+- [Configuration](#configuration-vandelay-jsjs)
+- [Multi-Root](#Multi-Root)
+- [Example Configuration File](#Example-Configuration-File)
+- [Settings](#Settings)
+
 ## Overview
 <a href="https://www.youtube.com/watch?v=W4AN8Eb2LL0&t=2m10s" target="_blank"><img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay/master/artwork/video.jpg" alt="He's an importer exporter" width="240" align="right" /></a>
 Importing code is annoying and the current VS Code tooling around it isn't good enough.
 This plugin keeps track of all available imports and allows you to quickly import them following
 whatever style guide your project requires for how import statements get written (see
-[Configuration](#configuration)). Multi-root workspaces are supported.
+[Configuration](#configuration)). Multi-root workspaces are supported ([documentation](#multi-root)).
 
 ## Flow & Typescript Support
 Flow types are supported, but Typescript currently is not.
@@ -56,8 +67,7 @@ options demonstrate, this allows the plugin to be fully customized to your proje
 
 ## Configuration (vandelay-js.js)
 You must create a file named `vandelay-js.js` at the root of your project. If using a multi-root
-workspace, set the `vandelay.configLocation` workspace setting to the **directory** containing the
-`vandelay-js.js` file.
+workspace, see [those instructions](#multi-root).
 
 #### *Any time you make changes to this file, you must reload the window.*
 
@@ -178,6 +188,13 @@ types are being imported from the given import path*. This can help mitigate cir
 issues under some circumstances. Regardless of this setting, if a value import exists for a given
 path then the syntax `import { myVal, type1, type2 } ...` will be used.
 
+## Multi-Root
+You must add a `.vandelay` directory to your workspace that contains a file named `vandelay-js.js`.
+Along with the above configuration options, you must also provide a `projectRoot` string that
+specifies the absolute path to the directory that should be considered the overall root of your
+project. This will be used for determining relative paths (these paths may always be adjusted via
+the `processImportPath` configuration option described above.
+
 ## Example Configuration File
 ```js
 const path = require('path')
@@ -229,3 +246,10 @@ module.exports = {
   importGroups: ['react', 'react-dom', 'redux', 'react-redux'],
 }
 ```
+
+## Settings
+Vandelay has one setting that may be specified in your VS Code user settings:
+
+### `autoImportSingleResult: boolean`
+Defaults to `true`. When the `Import active word` command is used, the import will be automatically
+written to the file if only a single result is found.
