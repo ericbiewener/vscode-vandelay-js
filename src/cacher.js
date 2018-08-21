@@ -60,10 +60,14 @@ function cacheFile(plugin, filepath, data = { _extraImports: {} }) {
       fileExports.named.push(match[1])
     } else if (plugin.useES5 && match[2]) {
       fileExports.named = fileExports.named || []
+      // If any array or object exports were defined inline, strip those out so that our comm-based
+      // string splitting will correctly split after each export
+      const text = match[2]
+        .replace(/\[[^]*?\]/gm, '')
+        .replace(/{[^]*?}/gm, '')
+        .replace(/\s/g, '')
       fileExports.named.push(
-        ..._.compact(match[2].replace(/\s/g, '').split(',')).map(
-          exp => exp.split(':')[0]
-        )
+        ..._.compact(text.split(',')).map(exp => exp.split(':')[0])
       )
     } else if (match[2] && match[2] !== 'from') {
       // from — it's actually a reexport

@@ -225,6 +225,20 @@ Array [
     "label": "src1_file1_t_2",
   },
   Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/es5/src1/file1.js",
+    "description": "src1/file1",
+    "exportType": 1,
+    "isExtraImport": undefined,
+    "label": "src1_file1_other1",
+  },
+  Object {
+    "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/es5/src1/file1.js",
+    "description": "src1/file1",
+    "exportType": 1,
+    "isExtraImport": undefined,
+    "label": "src1_file1_other2",
+  },
+  Object {
     "absImportPath": "/Users/ericbiewener/Active Projects/VS Code Extensions/vandelay/vandelay-js/test/es5/src1/file2.js",
     "description": "src1/file2",
     "exportType": 1,
@@ -306,8 +320,8 @@ exports[`import - comment with code right after - original order 1`] = `
 "// I'm a comment
 const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -322,8 +336,8 @@ exports[`import - comment with linebreak and code - original order 1`] = `
 "// I'm a comment
 const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -337,8 +351,8 @@ const foo = 1
 exports[`import - empty - original order 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -350,8 +364,8 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - has code - original order 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -363,8 +377,8 @@ const foo = 1
 `;
 
 exports[`import - importGroups 1`] = `
-"const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+"const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
 const { src2_file1_1 } = require('../src2/file1')
@@ -380,17 +394,17 @@ exports[`import - maxImportLineLength 1`] = `
 const defaultModule_file2 = require('module1_file2')
 const { module2_1,
   module2_2 as module2_2_renamed, module2_3,
-  module2_src2_1,
-  type module2_t_1 } = require('module2')
-const { 
-  src2_file1_1 } = require('../src2/file1')
+  module2_src2_1, type module2_t_1
+ } = require('module2')
+const { src2_file1_1
+ } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2,
   src1_file2_3, src1_file2_4, src1_file2_5,
-  src1_file2_t_1,
-  src1_file2_t_2 } = require('./file2')
+  src1_file2_t_1, src1_file2_t_2
+ } = require('./file2')
 const file3 = require('./file3')
-const { 
-  src1_subdir_file1_1 } = require('./subdir/file1')
+const { src1_subdir_file1_1
+ } = require('./subdir/file1')
 "
 `;
 
@@ -401,8 +415,8 @@ With multiple lines
 */
 const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -439,8 +453,8 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - nonModulePaths 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('file2')
 const file3 = require('file3')
@@ -452,8 +466,8 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - padCurlyBraces = false 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const {module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1} = require('module2')
+const {module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+} = require('module2')
 const {src2_file1_1} = require('../src2/file1')
 const {src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2} = require('./file2')
@@ -478,8 +492,8 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - processImportPath 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/FILE1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -514,8 +528,8 @@ exports[`import - single line comment - original order 1`] = `
 "// I'm a comment
 const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -527,11 +541,11 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - src1/subdir/file1.js - original order 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../../src2/file1')
-const { src1_file1_1, src1_file1_2, src1_file1_3, src1_file1_4, src1_file1_5, src1_file1_t_1,
-  src1_file1_t_2 } = require('../file1')
+const { src1_file1_1, src1_file1_2, src1_file1_3, src1_file1_4, src1_file1_5, src1_file1_other1,
+  src1_file1_other2, src1_file1_t_1, src1_file1_t_2 } = require('../file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('../file2')
 const file3 = require('../file3')
@@ -541,10 +555,10 @@ const file3 = require('../file3')
 exports[`import - src2/file1.js - original order 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
-const { src1_file1_1, src1_file1_2, src1_file1_3, src1_file1_4, src1_file1_5, src1_file1_t_1,
-  src1_file1_t_2 } = require('../src1/file1')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
+const { src1_file1_1, src1_file1_2, src1_file1_3, src1_file1_4, src1_file1_5, src1_file1_other1,
+  src1_file1_other2, src1_file1_t_1, src1_file1_t_2 } = require('../src1/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('../src1/file2')
 const file3 = require('../src1/file3')
@@ -580,8 +594,8 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - useSemicolons = false 1`] = `
 "const defaultModule1 = require('module1')
 const defaultModule_file2 = require('module1_file2')
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require('module2')
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require('module2')
 const { src2_file1_1 } = require('../src2/file1')
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require('./file2')
@@ -593,8 +607,8 @@ const { src1_subdir_file1_1 } = require('./subdir/file1')
 exports[`import - useSingleQuotes = false 1`] = `
 "const defaultModule1 = require(\\"module1\\")
 const defaultModule_file2 = require(\\"module1_file2\\")
-const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1,
-  type module2_t_1 } = require(\\"module2\\")
+const { module2_1, module2_2 as module2_2_renamed, module2_3, module2_src2_1, type module2_t_1
+ } = require(\\"module2\\")
 const { src2_file1_1 } = require(\\"../src2/file1\\")
 const { src1_file2_1, src1_file2_2, src1_file2_3, src1_file2_4, src1_file2_5, src1_file2_t_1,
   src1_file2_t_2 } = require(\\"./file2\\")

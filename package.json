@@ -2,7 +2,7 @@
   "name": "vandelay-js",
   "displayName": "Vandelay JavaScript",
   "description": "Automatically generate import statements for JavaScript.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "edb",
   "author": "Eric Biewener",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "javascript",
     "generator"
   ],
-  "icon": "artwork/logo.png",
+  "icon": "logo.png",
   "galleryBanner": {
     "color": "#01263F",
     "theme": "dark"
@@ -37,7 +37,9 @@
     "vscode": "^1.21.0"
   },
   "activationEvents": [
-    "*"
+    "onLanguage:javascriptreact",
+    "onLanguage:javascript",
+    "onCommand:vandelay.cacheProject"
   ],
   "extensionDependencies": [
     "edb.vandelay"
@@ -58,6 +60,8 @@
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
     "prettier": "prettier-eslint --prettier-last --write \"**/*.js\"",
+    "package": "vsce package --yarn",
+    "install": "yarn run package && code --install-extension *.vsix",
     "publish": "vsce publish --yarn"
   },
   "devDependencies": {

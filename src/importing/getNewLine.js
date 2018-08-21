@@ -81,7 +81,10 @@ function getNewLine(plugin, importPath, imports) {
     }
   })
 
-  if (line.length + newLineEnd.length > maxImportLineLength) line += '\n'
+  if (line.length + newLineEnd.length > maxImportLineLength) {
+    line += '\n'
+    newLineEnd = newLineEnd.trim()
+  }
 
   return fullText + line + newLineEnd
 }

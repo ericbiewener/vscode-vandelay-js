@@ -19,4 +19,8 @@ module.exports = {
   src1_file1_5,
   src1_file1_t_1,
   src1_file1_t_2,
+  src1_file1_other1: 10,
+  src1_file1_other2: [
+    5, 7, 9
+  ],
 }

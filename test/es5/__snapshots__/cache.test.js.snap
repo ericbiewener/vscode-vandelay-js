@@ -32,6 +32,8 @@ Object {
       "src1_file1_5",
       "src1_file1_t_1",
       "src1_file1_t_2",
+      "src1_file1_other1",
+      "src1_file1_other2",
     ],
   },
   "src1/file2.js": Object {
@@ -107,6 +109,8 @@ Object {
       "src1_file1_5",
       "src1_file1_t_1",
       "src1_file1_t_2",
+      "src1_file1_other1",
+      "src1_file1_other2",
     ],
   },
   "src1/file2.js": Object {
@@ -175,6 +179,8 @@ Object {
       "src1_file1_5",
       "src1_file1_t_1",
       "src1_file1_t_2",
+      "src1_file1_other1",
+      "src1_file1_other2",
     ],
   },
   "src1/file2.js": Object {
@@ -221,6 +227,8 @@ Object {
       "src1_file1_5",
       "src1_file1_t_1",
       "src1_file1_t_2",
+      "src1_file1_other1",
+      "src1_file1_other2",
     ],
   },
   "src1/file2.js": Object {
