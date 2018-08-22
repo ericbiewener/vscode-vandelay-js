@@ -7,7 +7,7 @@ const {
 } = require('./importing/buildImportItems')
 
 async function activate(context) {
-  console.log('Vandelay JS extension activating')
+  console.log('Vandelay JavaScript: Activating')
   const ext = extensions.getExtension('edb.vandelay')
   if (!ext) {
     window.showErrorMessage(
@@ -19,7 +19,7 @@ async function activate(context) {
 
   const _test = {}
 
-  console.log('Registering Vandelay JavaScript plugin with core extension')
+  console.log('Vandelay JavaScript: registerPlugin')
   vandelay.registerPlugin({
     language: 'js',
     cacheFile,
@@ -33,7 +33,7 @@ async function activate(context) {
     multilineImportStyle: 'multi',
     finalizePlugin(plugin) {
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
-      console.log('Vandelay JavaScript plugin finalized')
+      console.log('Vandelay JavaScript: finalized', plugin)
       plugin._test = vandelay._test
       _test.plugin = plugin
     },
