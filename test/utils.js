@@ -69,7 +69,7 @@ const insertTest = async (context, startingText, filepath) => {
   expect(originalResult).toMatchSnapshot(context, 'original order')
 
   if (process.env.FULL_INSERT_TEST) {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 8; i++) {
       await replaceFileContents(startingText)
       const newArray = _.shuffle(originalItems)
       const newResult = await insertItems(plugin, newArray)
