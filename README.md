@@ -67,7 +67,7 @@ options demonstrate, this allows the plugin to be fully customized to your proje
 
 ## Configuration (vandelay-js.js)
 You must create a file named `vandelay-js.js` at the root of your project. If using a multi-root
-workspace, see [those instructions](#multi-root).
+workspace, see [those instructions](#multi-root-workspace).
 
 #### *Any time you make changes to this file, you must reload the window.*
 
