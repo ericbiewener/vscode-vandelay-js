@@ -17,7 +17,7 @@
 - [Overview](#overview)
 - [Flow & Typescript Support](#flow--typescript-support)
 - [Commands](#commands)
-- [Importing from node_modules](#importing-from-node_modules)
+- [Importing from node_modules and Node.js modules](#importing-from-node_modules-and-nodejs-modules)
 - [How to Use](#how-to-use)
 - [Configuration](#configuration-vandelay-jsjs)
 - [Multi-Root Workspace](#multi-root-workspace)
@@ -54,12 +54,12 @@ active word are found, you'll be asked to choose.
 ### Import type
 Select an available import, but filtered to show just Flow types.
 
-## Importing from node_modules
+## Importing from node_modules and Node.js modules
 Rather than try to actually parse and track all the possible imports in your project's
 `node_modules` folder, Vandelay JS simply tracks the ones you use. This means you'll need to
 write the import statement yourself the very first time you use a node_modules import, but the
 plugin will remember it after that and make it available for automatic importing. The same thing
-goes for node system imports.
+goes for importing Node.js modules.
 
 ## How to Use
 Vandelay relies on JavaScript configuration files, not simply JSON. As the below configuration
@@ -188,7 +188,7 @@ types are being imported from the given import path*. This can help mitigate cir
 issues under some circumstances. Regardless of this setting, if a value import exists for a given
 path then the syntax `import { myVal, type1, type2 } ...` will be used.
 
-## Multi-Root
+## Multi-Root Workspace
 You must add a `.vandelay` directory to your workspace that contains a file named `vandelay-js.js`.
 Along with the above configuration options, you must also provide a `projectRoot` string that
 specifies the absolute path to the directory that should be considered the overall root of your
