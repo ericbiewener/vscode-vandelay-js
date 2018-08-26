@@ -14,22 +14,22 @@
 <br />
 
 ## Table of Contents
-- [Overview](#Overview)
-- [Flow & Typescript Support](#Flow--Typescript-Support)
-- [Commands](#Commands)
-- [Importing from node_modules](#Importing-from-node_modules)
-- [How to Use](#How-to-Use)
+- [Overview](#overview)
+- [Flow & Typescript Support](#flow--typescript-support)
+- [Commands](#commands)
+- [Importing from node_modules](#importing-from-node_modules)
+- [How to Use](#how-to-use)
 - [Configuration](#configuration-vandelay-jsjs)
-- [Multi-Root](#Multi-Root)
-- [Example Configuration File](#Example-Configuration-File)
-- [Settings](#Settings)
+- [Multi-Root Workspace](#multi-root-workspace)
+- [Example Configuration File](#example-configuration-file)
+- [Settings](#settings)
 
 ## Overview
 <a href="https://www.youtube.com/watch?v=W4AN8Eb2LL0&t=2m10s" target="_blank"><img src="https://raw.githubusercontent.com/ericbiewener/vscode-vandelay/master/artwork/video.jpg" alt="He's an importer exporter" width="240" align="right" /></a>
 Importing code is annoying and the current VS Code tooling around it isn't good enough.
 This plugin keeps track of all available imports and allows you to quickly import them following
 whatever style guide your project requires for how import statements get written (see
-[Configuration](#configuration)). Multi-root workspaces are supported ([documentation](#multi-root)).
+[Configuration](#configuration-vandelay-jsjs)). Multi-root workspaces are supported ([documentation](#multi-root-workspace)).
 
 ## Flow & Typescript Support
 Flow types are supported, but Typescript currently is not.
