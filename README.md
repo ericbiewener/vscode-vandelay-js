@@ -77,7 +77,7 @@ project will simply cause the plugin not to run.
 
 The configuration file must be written in JavaScript and export an object (`module.exports = { ...
 }` syntax) containing the desired configuration options. See 
-[this example configuration file](#example configuration file).
+[this example configuration file](#example-configuration-file).
 
 ### `includePaths: Array<string>`
 An array of filepaths that Vandelay should watch for exports. This is the only required configuration option.
