@@ -39,7 +39,7 @@ The following commands are available from the Command Palette. Feel free to set 
 
 ### Cache Project Exports
 Caches all project exports in all languages that have a Vandelay configuration file (see 
-[How to Use](#how to use)). Vandelay will automatically run this command the first time it
+[How to Use](#how-to-use)). Vandelay will automatically run this command the first time it
 initializes for a given project, and the plugin will watch for file changes (including branch
 switching, file deletion, etc) in order to update its cache of available imports. But you may need
 to manually run this command if files are changed while VS Code is not running.
