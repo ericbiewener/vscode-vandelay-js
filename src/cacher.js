@@ -179,8 +179,13 @@ function processCachedData(data) {
       })
 
       delete fileData.all
-      // flag names in `index.js` key
-      if (reexportNames.length) fileData.reexports = reexportNames
+    }
+
+    // flag names in `index.js` key
+    if (reexportNames.length) {
+      fileData.reexports = reexportNames
+    } else {
+      delete fileData.reexports
     }
   })
 

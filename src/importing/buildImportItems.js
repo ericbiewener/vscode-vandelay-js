@@ -60,8 +60,12 @@ function buildImportItems(plugin, exportData) {
         data.reexports &&
         activeFilepath.startsWith(path.dirname(absImportPath))
       ) {
-        namedExports = data.named.filter(n => !data.reexports.includes(n))
-        typeExports = data.types.filter(n => !data.reexports.includes(n))
+        namedExports = data.named
+          ? data.named.filter(n => !data.reexports.includes(n))
+          : null
+        typeExports = data.types
+          ? data.types.filter(n => !data.reexports.includes(n))
+          : null
       } else {
         defaultExport = data.default
         namedExports = data.named
