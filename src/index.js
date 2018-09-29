@@ -42,6 +42,7 @@ async function activate(context) {
     useSemicolons: true,
     trailingComma: true,
     multilineImportStyle: 'multi',
+    undefinedVariableCodes: ['no-undef'],
     finalizePlugin(plugin) {
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
       console.log('Vandelay JavaScript: finalized', plugin)
