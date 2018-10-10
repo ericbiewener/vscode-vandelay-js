@@ -52,9 +52,13 @@ A shortcut to automatically import the word under the carat. If more than one im
 active word are found, you'll be asked to choose.
 
 ### Import undefined variables
-Vandelay will attempt to find imports for all undefined variables in the active file. Like the
-"Import active word" command, if only a single possible import is found for a given variable, it
-will automatically be imported. Otherwise, you will need to choose the correct one.
+Vandelay will attempt to find imports for all undefined variables reported by the linter for the
+active file. Like the "Import active word" command, if only a single possible import is found for a
+given variable, it will automatically be imported. Otherwise, you will need to choose the correct
+one.
+
+### Remove Unused Imports
+Vandelay will remove all unused imports reported by the linter.
 
 ### Import type
 Select an available import, but filtered to show just Flow types.

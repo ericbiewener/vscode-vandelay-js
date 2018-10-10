@@ -6,6 +6,7 @@ const {
   buildImportItems,
   buildTypeImportItems,
 } = require('./importing/buildImportItems')
+const { removeUnusedImports } = require('./removeUnusedImports')
 
 async function activate(context) {
   console.log('Vandelay JavaScript: Activating')
@@ -28,6 +29,7 @@ async function activate(context) {
 
   const vandelay = await ext.activate()
 
+  let plugin
   const _test = {}
 
   console.log('Vandelay JavaScript: registerPlugin')
@@ -37,13 +39,23 @@ async function activate(context) {
     processCachedData,
     buildImportItems,
     insertImport,
+    removeUnusedImports,
     useSingleQuotes: true,
     padCurlyBraces: true,
     useSemicolons: true,
     trailingComma: true,
     multilineImportStyle: 'multi',
-    undefinedVariableCodes: ['no-undef'],
-    finalizePlugin(plugin) {
+    undefinedVariableCodes: ['no-undef', 'react/jsx-no-undef'],
+    context,
+    newVersionAlert: {
+      name: 'Vandelay JS',
+      changelogUrl:
+        'https://github.com/ericbiewener/vscode-vandelay-js/blob/master/CHANGELOG.md',
+      extensionIdentifier: 'edb.vandelay-js',
+      suppressAlert: true,
+    },
+    finalizePlugin(finalPlugin) {
+      plugin = finalPlugin
       plugin.excludePatterns.push(/.*\/node_modules(\/.*)?/)
       console.log('Vandelay JavaScript: finalized', plugin)
       plugin._test = vandelay._test

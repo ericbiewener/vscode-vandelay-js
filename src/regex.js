@@ -9,8 +9,8 @@ const _ = require('lodash')
  *    2. named/type imports
  *    3. path
  */
-const importRegex = /^import +?([^{]+?[, ])? *(?:{([^]*?)} +)?from +["|'](.*)["|'].*/gm
-const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\( *['|"](.*?)['|"].*/gm
+const importRegex = /^import +?([^{]+?[, ])? *(?:{([^]*?)} +)?from +["'](.*)["'].*/gm
+const requireRegex = /^(?:const|let|var) +(\w+)?(?:{([^]*?)})? *= *require\( *['"](.*?)['"].*/gm
 
 function parseImports(plugin, text) {
   const regex = plugin.useES5 ? requireRegex : importRegex
@@ -67,8 +67,8 @@ const exportRegex = {
   // `standard` also captures selective reexports that include a default reexport. It is the
   // responsibility of `cacheFile` to handle this when processing these improts.
   standard: /^export +(\w+,?)(?: +(\w+))?/gm,
-  fullRexport: /^export +\*.+?['|"](.+)['|"]/gm,
-  selectiveRexport: /^export +(\w*),* *{([^]+?)}.+?['|"](.+)['|"]/gm,
+  fullRexport: /^export +\*.+?['"](.+)['"]/gm,
+  selectiveRexport: /^export +(\w*),* *{([^]+?)}.+?['"](.+)['"]/gm,
   moduleExports: /^module\.exports *= *(\w+)?(?:{([^]*?)})?.*/gm,
 }
 
