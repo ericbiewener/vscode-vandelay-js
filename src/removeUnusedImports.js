@@ -4,7 +4,6 @@ const { getNewLine } = require('./importing/getNewLine')
 const { parseImports } = require('./regex')
 
 async function removeUnusedImports(plugin) {
-  const re = plugin.useES5 ? /require\( *['"](.*?)['"]/g : /from +["'](.*)["']/g
   const diagnostics = plugin.utils.getDiagnosticsForCodes(['no-unused-vars'])
 
   for (const filepath in diagnostics) {
@@ -14,14 +13,14 @@ async function removeUnusedImports(plugin) {
     })
     const { document } = editor
     const fullText = document.getText()
-    const importMatches = parseImports(plugin, fullText)
+    const fileImports = parseImports(plugin, fullText)
     const changes = {}
 
     for (const diagnostic of diagnostics[filepath]) {
-      re.lastIndex = document.offsetAt(diagnostic.range.end) // start searching after the diagnostic location
-      const pathMatch = re.exec(fullText)
-      if (!pathMatch) return
-      const importMatch = importMatches.find(m => m.path === pathMatch[1])
+      const offset = document.offsetAt(diagnostic.range.start)
+      const importMatch = fileImports.find(
+        i => i.start <= offset && i.end >= offset
+      )
       if (!importMatch) return
 
       const existingChange = changes[importMatch.path]
