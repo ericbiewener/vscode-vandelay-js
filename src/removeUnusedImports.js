@@ -21,7 +21,7 @@ async function removeUnusedImports(plugin) {
       const importMatch = fileImports.find(
         i => i.start <= offset && i.end >= offset
       )
-      if (!importMatch) return
+      if (!importMatch) continue
 
       const existingChange = changes[importMatch.path]
       const { default: defaultImport, named, types } =
