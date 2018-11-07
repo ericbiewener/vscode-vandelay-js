@@ -53,7 +53,7 @@ async function activate(context) {
       changelogUrl:
         'https://github.com/ericbiewener/vscode-vandelay-js/blob/master/CHANGELOG.md',
       extensionIdentifier: 'edb.vandelay-js',
-      suppressAlert: true,
+      suppressAlert: false,
     },
     finalizePlugin(finalPlugin) {
       plugin = finalPlugin
