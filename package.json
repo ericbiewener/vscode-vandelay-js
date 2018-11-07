@@ -2,7 +2,7 @@
   "name": "vandelay-js",
   "displayName": "Vandelay JavaScript",
   "description": "Automatically generate import statements for JavaScript.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publisher": "edb",
   "author": "Eric Biewener",
   "license": "MIT",
