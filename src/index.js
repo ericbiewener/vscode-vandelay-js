@@ -7,6 +7,7 @@ const {
   buildTypeImportItems,
 } = require('./importing/buildImportItems')
 const { removeUnusedImports } = require('./removeUnusedImports')
+const { shouldIncludeDisgnostic } = require('./utils')
 
 async function activate(context) {
   console.log('Vandelay JavaScript: Activating')
@@ -45,7 +46,7 @@ async function activate(context) {
     useSemicolons: true,
     trailingComma: true,
     multilineImportStyle: 'multi',
-    undefinedVariableCodes: ['no-undef', 'react/jsx-no-undef'],
+    shouldIncludeDisgnostic,
     context,
     newVersionAlert: {
       name: 'Vandelay JS',

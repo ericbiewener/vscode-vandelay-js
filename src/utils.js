@@ -14,7 +14,15 @@ function isPathNodeModule(plugin, importPath) {
   )
 }
 
+function shouldIncludeDisgnostic({ code, source, message }) {
+  return (
+    ['no-undef', 'react/jsx-no-undef'].includes(code) ||
+    (source === 'flow' && message.startsWith('Cannot resolve name'))
+  )
+}
+
 module.exports = {
   basename,
   isPathNodeModule,
+  shouldIncludeDisgnostic,
 }
