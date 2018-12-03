@@ -1,3 +1,7 @@
+### 1.2.0
+- Fix removing unused vars for new diagnostics API (origin/master)
+- Update README
+
 ### 1.1.2
 - Automatically import undefined Flow types
 
