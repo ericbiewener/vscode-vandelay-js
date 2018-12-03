@@ -60,6 +60,9 @@ one.
 ### Remove Unused Imports
 Vandelay will remove all unused imports reported by the linter.
 
+### Fix Imports
+Combination of the previous two commands. Imports all undefined variables and removes unused imports.
+
 ### Import type
 Select an available import, but filtered to show just Flow types.
 
